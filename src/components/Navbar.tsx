@@ -32,10 +32,10 @@ export default function Navbar() {
               <path d="M14 14l1.5 3.5M14 14l3.5 1.5" stroke="#064e3b" strokeWidth="1.2" strokeLinecap="round" />
             </svg>
             <div className="nav-logo-text">
-              Friends of Pakistan<span>Humanitarian Foundation</span>
+              Friends of Pakistan<span>Serving humanity</span>
             </div>
           </Link>
-          
+
           <div className="nav-links">
             <Link href="/" className={`nav-link ${pathname === "/" ? "active" : ""}`}>Home</Link>
             <Link href="/about" className={`nav-link ${pathname === "/about" ? "active" : ""}`}>About</Link>
@@ -45,11 +45,11 @@ export default function Navbar() {
             <Link href="/partners" className={`nav-link ${pathname === "/partners" ? "active" : ""}`}>Partners</Link>
             <Link href="/contact" className={`nav-link ${pathname === "/contact" ? "active" : ""}`}>Contact</Link>
           </div>
-          
+
           <Link href="/volunteer" className="btn btn-primary nav-cta">
             Get Involved
           </Link>
-          
+
           <button className={`hamburger ${menuOpen ? "open" : ""}`} onClick={toggleMenu} aria-label="Menu">
             <span></span>
             <span></span>

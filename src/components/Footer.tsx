@@ -17,7 +17,7 @@ export default function Footer() {
               <a href="#" className="footer-social-btn">yt</a>
             </div>
           </div>
-          
+
           <div>
             <div className="footer-heading">Quick Links</div>
             <ul className="footer-links">
@@ -29,7 +29,7 @@ export default function Footer() {
               <li><Link href="/contact">Contact</Link></li>
             </ul>
           </div>
-          
+
           <div>
             <div className="footer-heading">Our Work</div>
             <ul className="footer-links">
@@ -41,7 +41,7 @@ export default function Footer() {
               <li><Link href="/volunteer">Volunteer</Link></li>
             </ul>
           </div>
-          
+
           <div>
             <div className="footer-heading">Contact Info</div>
             <div className="footer-contact-item"><span className="footer-contact-icon">📧</span><span>info@friendsofpakistan.org</span></div>
@@ -50,10 +50,10 @@ export default function Footer() {
             <div className="footer-contact-item"><span className="footer-contact-icon">🕐</span><span>Mon–Sat: 9AM – 6PM</span></div>
           </div>
         </div>
-        
+
         <div className="footer-bottom">
-          <span>© 2025 Friends of Pakistan. All rights reserved.</span>
-          <span>Founded 2021 · Registered NGO Pakistan</span>
+          <span>© 2026 Friends of Pakistan. All rights reserved.</span>
+          <span>Founded 2021</span>
         </div>
       </div>
     </footer>
