@@ -30,7 +30,7 @@ export default function ImpactPage() {
               <div className="metric-num">200+</div>
               <div className="metric-label">Clean Water Wells Installed</div>
             </ScrollReveal>
-            <ScrollReveal className="metric-card" style={{ marginTop: 0 }}>
+            <ScrollReveal className="metric-card">
               <div className="metric-num">1,200+</div>
               <div className="metric-label">Families Housed</div>
             </ScrollReveal>

@@ -6,6 +6,7 @@ import MissionCard from "@/components/MissionCard";
 import CauseCard from "@/components/CauseCard";
 import ProjectCard from "@/components/ProjectCard";
 import TestimonialCard from "@/components/TestimonialCard";
+// import ImpactCalculator from "@/components/ImpactCalculator";
 import { projects } from "@/data/projects";
 
 export default function Home() {
@@ -14,17 +15,38 @@ export default function Home() {
   return (
     <>
       <section id="hero">
+        {/* Background Atmosphere */}
         <div className="hero-bg"></div>
         <div className="hero-pattern"></div>
         <div className="hero-img"></div>
+        
+        {/* Glowing Orbs for Visual Depth */}
+        <div className="glow-orb glow-green"></div>
+        <div className="glow-orb glow-gold"></div>
+
+        {/* Urdu Calligraphy Decorative Watermarks */}
+        <div 
+          className="urdu-watermark urdu-hope"
+          style={{ fontFamily: "'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif" }}
+        >
+          امید
+        </div>
+        <div 
+          className="urdu-watermark urdu-humanity"
+          style={{ fontFamily: "'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif" }}
+        >
+          انسانیت
+        </div>
+
         <div className="container">
-          <div className="hero-content">
+          {/* Left: Headline and Copy */}
+          <div className="hero-content" style={{ maxWidth: "800px" }}>
             <div className="hero-badge">🇵🇰 Serving Pakistan since 2021</div>
             <h1 className="hero-title">
               Bringing <strong>Hope</strong> Home,<br />One Family<br />at a Time
             </h1>
             <p className="hero-sub">
-              Together we build more than houses—we restore dignity and rebuild lives.
+              Together we build more than houses—we restore dignity, secure water resources, and rebuild lives across Pakistan.
             </p>
             <div className="hero-causes">
               <span className="hero-cause">Housing</span>
@@ -32,7 +54,7 @@ export default function Home() {
               <span className="hero-cause">Disaster Relief</span>
             </div>
             <div className="hero-btns">
-              <Link href="/projects" className="btn btn-primary">
+              <Link href="/projects" className="btn btn-green">
                 Explore Our Work
               </Link>
               <Link href="/about" className="btn btn-outline">
@@ -40,7 +62,14 @@ export default function Home() {
               </Link>
             </div>
           </div>
+
+          {/* Right: Live Impact Calculator (Source code remains in components/ImpactCalculator.tsx)
+          <ScrollReveal className="hero-calculator-wrap" delay={1}>
+            <ImpactCalculator />
+          </ScrollReveal>
+          */}
         </div>
+
         <div className="hero-scroll">
           <span>Scroll</span>
           <div className="hero-scroll-arrow"></div>
@@ -49,25 +78,39 @@ export default function Home() {
 
       <StatsStrip />
 
-      <section className="section" style={{ background: "var(--white)", paddingTop: 0, paddingBottom: 0 }}>
-        <div className="mission-grid">
-          <MissionCard 
-            icon="🎯"
-            title="Our Mission"
-            text="To serve the most vulnerable communities in Pakistan with dignity, providing essential housing, clean water, and emergency relief to those who need it most."
+      <section className="section" style={{ background: "transparent", paddingTop: "80px", paddingBottom: "80px" }}>
+        <div className="container">
+          <SectionHeading 
+            tag="Our Core Mission" 
+            title="Building a Ground-up Impact Network"
+            subtitle="No bureaucracy. No delays. Just direct action and extreme financial accountability."
+            align="center"
           />
-          <MissionCard 
-            icon="🤝"
-            title="Our Approach"
-            text="We work directly on the ground with local communities, ensuring every rupee reaches those in need. No bureaucracy. No delays. Just impact — fast and transparent."
-            delay={1}
-          />
-          <MissionCard 
-            icon="🌍"
-            title="Our Reach"
-            text="From Sindh to KPK, from flood zones to drought-stricken villages — Friends of Pakistan is everywhere Pakistanis need a helping hand."
-            delay={2}
-          />
+          <div className="bento-grid">
+            <div className="bento-main">
+              <MissionCard 
+                icon="🎯"
+                title="Our Mission"
+                text="To serve the most vulnerable communities in Pakistan with dignity, providing essential housing, clean water, and emergency relief to those who need it most."
+              />
+            </div>
+            <div className="bento-secondary">
+              <MissionCard 
+                icon="🤝"
+                title="Our Approach"
+                text="We work directly on the ground with local communities, ensuring every rupee reaches those in need. Admin costs are raised separately, ensuring 100% donation efficiency."
+                delay={1}
+              />
+            </div>
+            <div className="bento-secondary">
+              <MissionCard 
+                icon="🌍"
+                title="Our Reach"
+                text="From Sindh to KPK, from flood zones to drought-stricken villages — Friends of Pakistan is everywhere Pakistanis need a helping hand."
+                delay={2}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -79,34 +122,40 @@ export default function Home() {
             subtitle="Every project we undertake falls under one of our three core causes — each chosen because the need is urgent and the impact is transformative."
           />
           <div className="causes-grid">
-            <CauseCard 
-              title="Safe Homes for Families"
-              desc="We build and restore homes for families displaced by floods, poverty, and disasters. Every family deserves four walls and a roof — not a promise."
-              img="https://picsum.photos/500/300?random=21"
-              badge="Housing"
-              count={430}
-              countLabel="Homes Built"
-            />
-            <CauseCard 
-              title="Clean Water Access"
-              desc="We install hand pumps, filtration systems, and water tanks in villages where clean water is a distant dream. Water is life — we make it reachable."
-              img="https://picsum.photos/500/300?random=22"
-              badge="Clean Water"
-              badgeColor="#1565C0"
-              count={200}
-              countLabel="Wells Installed"
-              delay={1}
-            />
-            <CauseCard 
-              title="Emergency Disaster Relief"
-              desc="When floods, earthquakes, or crises strike, we mobilize within hours. Food packages, shelter kits, medicines — delivered directly to those who can't wait."
-              img="https://picsum.photos/500/300?random=23"
-              badge="Disaster Relief"
-              badgeColor="#B71C1C"
-              count={380}
-              countLabel="Relief Operations"
-              delay={2}
-            />
+            <div className="bento-main">
+              <CauseCard 
+                title="Safe Homes for Families"
+                desc="We build and restore concrete, flood-resilient homes for families displaced by disasters. Every family deserves a strong roof over their heads."
+                img="https://picsum.photos/500/500?random=21"
+                badge="Housing"
+                count={430}
+                countLabel="Homes Built"
+              />
+            </div>
+            <div className="bento-secondary">
+              <CauseCard 
+                title="Clean Water Access"
+                desc="We install hand pumps, deep wells, and filtration systems in remote villages where clean water is a distant dream."
+                img="https://picsum.photos/500/250?random=22"
+                badge="Clean Water"
+                badgeColor="#10b981"
+                count={200}
+                countLabel="Wells Installed"
+                delay={1}
+              />
+            </div>
+            <div className="bento-secondary">
+              <CauseCard 
+                title="Emergency Disaster Relief"
+                desc="When crisis strikes, we mobilize within 48 hours to deliver emergency ration packages, tents, medical kits, and relief supplies directly."
+                img="https://picsum.photos/500/250?random=23"
+                badge="Disaster Relief"
+                badgeColor="#b91c1c"
+                count={380}
+                countLabel="Operations Run"
+                delay={2}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -125,7 +174,7 @@ export default function Home() {
           </div>
           <div className="load-more-wrap">
             <Link href="/projects" className="btn btn-green">
-              View All 1000+ Projects
+              View All 1,000+ Projects
             </Link>
           </div>
         </div>
@@ -146,7 +195,7 @@ export default function Home() {
             <ScrollReveal delay={1}>
               <SectionHeading tag="A story of change" title="From Rubble to Home" />
               <blockquote className="story-quote">
-                "Before Friends of Pakistan came, my children slept under open sky for three months. Now we have walls, a roof, and hope again."
+                "Before Friends of Pakistan came, my children slept under the open sky for three months. Now we have walls, a roof, and hope again."
               </blockquote>
               <p className="story-text">In the aftermath of Pakistan's devastating 2022 floods, the Mirza family of Dadu, Sindh lost everything — their home, their belongings, and their sense of security. Like 33 million others, they were left with nothing.</p>
               <p className="story-text">Friends of Pakistan mobilized within 48 hours of the disaster. Our field teams assessed the damage, and within weeks, construction began. Today, the Mirza family lives in a proper structure with clean water access — built to withstand future floods.</p>
@@ -158,7 +207,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="story-author-name">Fatima Mirza</div>
-                  <div className="story-author-loc">📍 Dadu, Sindh — Housing Beneficiary 2022</div>
+                  <div className="story-author-loc">📍 Dadu, Sindh — Housing Beneficiary</div>
                 </div>
               </div>
               <Link href="/impact" className="btn btn-green" style={{ marginTop: "32px" }}>
@@ -173,9 +222,7 @@ export default function Home() {
         <div className="container">
           <SectionHeading 
             tag="Voices of change" 
-            tagColor="var(--gold-light)" 
             title="What Our Donors Say" 
-            titleColor="var(--white)"
           />
           <div className="testi-grid">
             <TestimonialCard 
