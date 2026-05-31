@@ -21,10 +21,10 @@ export default function Home() {
           <div className="hero-content">
             <div className="hero-badge">🇵🇰 Serving Pakistan since 2021</div>
             <h1 className="hero-title">
-              Serving <strong>Humanity,</strong><br />One Project<br />at a Time
+              Bringing <strong>Hope</strong> Home,<br />One Family<br />at a Time
             </h1>
             <p className="hero-sub">
-              Making real change — one family, one well, one home at a time.
+              Together we build more than houses—we restore dignity and rebuild lives.
             </p>
             <div className="hero-causes">
               <span className="hero-cause">Housing</span>
@@ -220,8 +220,8 @@ export default function Home() {
 
       <div className="cta-section">
         <div className="container">
-          <h2 className="cta-title">Want to Make a Real Difference?</h2>
-          <p className="cta-sub">Join hundreds of volunteers and donors who are changing lives across Pakistan.</p>
+          <h2 className="cta-title">Their Tomorrow Starts With You Today</h2>
+          <p className="cta-sub">Join hundreds of volunteers and donors who are bringing hope and restoring dignity across Pakistan.</p>
           <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap", position: "relative" }}>
             <Link href="/volunteer" className="btn btn-primary">
               Volunteer With Us
