@@ -53,7 +53,7 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <span>© 2026 Friends of Pakistan. All rights reserved.</span>
-          <span>Founded 2021</span>
+          <span>Founded 2021 | Serving humanity</span>
         </div>
       </div>
     </footer>
