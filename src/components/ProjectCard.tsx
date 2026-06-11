@@ -28,7 +28,7 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
             <span className="project-beneficiaries">
               <strong>{project.beneficiaries.toLocaleString()}</strong> beneficiaries
             </span>
-            <Link href="/projects" className="project-link">
+            <Link href={`/projects?search=${encodeURIComponent(project.title)}`} className="project-link">
               View details →
             </Link>
           </div>

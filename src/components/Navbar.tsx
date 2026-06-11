@@ -44,7 +44,6 @@ export default function Navbar() {
             <Link href="/media" className={`nav-link ${pathname === "/media" ? "active" : ""}`}>Media</Link>
             <Link href="/partners" className={`nav-link ${pathname === "/partners" ? "active" : ""}`}>Partners</Link>
             <Link href="/contact" className={`nav-link ${pathname === "/contact" ? "active" : ""}`}>Contact</Link>
-            <Link href="/dashboard" className={`nav-link ${pathname === "/dashboard" ? "active" : ""}`} style={{ color: "var(--gold)", fontWeight: 600 }}>Dashboard</Link>
           </div>
 
           <Link href="/volunteer" className="btn btn-primary nav-cta">
@@ -69,7 +68,6 @@ export default function Navbar() {
         <Link href="/partners" onClick={closeMenu}>Partners</Link>
         <Link href="/volunteer" onClick={closeMenu}>Volunteer</Link>
         <Link href="/contact" onClick={closeMenu}>Contact</Link>
-        <Link href="/dashboard" onClick={closeMenu} style={{ color: "var(--gold)" }}>Dashboard</Link>
       </div>
     </>
   );
