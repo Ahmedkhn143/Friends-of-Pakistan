@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { initializeFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Project } from "@/data/projects";
 
 // Firebase credentials from console screenshot
@@ -9,7 +10,7 @@ const firebaseConfig = {
   projectId: "friends-of-pakistan-1",
   storageBucket: "friends-of-pakistan-1.firebasestorage.app",
   messagingSenderId: "394322709045",
-  appId: "1:1234567890:web:145bd2e24f16df69e5ff7c" // Using the correct dynamic app ID structure
+  appId: "1:1234567890:web:145bd2e24f16df69e5ff7c"
 };
 
 // Initialize Firebase
@@ -20,6 +21,7 @@ const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
 });
 
+const storage = getStorage(app);
 const projectsCollection = collection(db, "projects");
 
 let cachedProjects: Project[] = [];
@@ -49,6 +51,13 @@ export async function fetchProjectsFromFirebase(): Promise<Project[]> {
     console.error("Firebase fetch error:", e);
     return cachedProjects;
   }
+}
+
+// Upload file to Firebase Storage
+export async function uploadProjectImage(file: File): Promise<string> {
+  const fileRef = ref(storage, `project_images/${Date.now()}_${file.name}`);
+  await uploadBytes(fileRef, file);
+  return getDownloadURL(fileRef);
 }
 
 // 1. Get Projects

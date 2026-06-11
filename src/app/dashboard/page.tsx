@@ -2,36 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Project, ProjectCategory } from "@/data/projects";
-import { getProjects, saveProject, deleteProject } from "@/utils/projectDb";
+import { getProjects, saveProject, deleteProject, uploadProjectImage } from "@/utils/projectDb";
 import styles from "./dashboard.module.css";
 
 // Admin Credentials
 const ADMIN_EMAIL = "admin@friendsofpakistan.org";
 const ADMIN_PASSWORD = "FOP-Admin-Secure-2026!";
-
-// 20 High-Quality Demo Projects Data
-const demoProjectsList: Omit<Project, "id">[] = [
-  { title: "Flood Relief — Dadu District", category: "Disaster Relief", location: "Dadu, Sindh", date: "Aug 2022", desc: "Emergency food packages and shelter kits distributed to 200 flood-affected families within 48 hours.", beneficiaries: 200, img: "https://picsum.photos/400/260?random=101" },
-  { title: "Hand Pump Installation — Dera Ghazi Khan", category: "Clean Water", location: "Dera Ghazi Khan, Punjab", date: "Mar 2023", desc: "5 hand pumps installed in remote villages, providing clean drinking water to over 600 people.", beneficiaries: 600, img: "https://picsum.photos/400/260?random=102" },
-  { title: "Flood Housing — Larkana", category: "Housing", location: "Larkana, Sindh", date: "Oct 2022", desc: "30 permanent homes constructed for families who lost everything in the 2022 super floods.", beneficiaries: 150, img: "https://picsum.photos/400/260?random=103" },
-  { title: "Winter Food Drive — Quetta", category: "Food Aid", location: "Quetta, Balochistan", date: "Dec 2023", desc: "2,000 monthly ration packs distributed to destitute families during the harsh Balochistan winter.", beneficiaries: 2000, img: "https://picsum.photos/400/260?random=104" },
-  { title: "Solar Tube Well — Thar Desert", category: "Clean Water", location: "Tharparkar, Sindh", date: "May 2023", desc: "Solar-powered tube well installed providing year-round water supply to an entire desert village.", beneficiaries: 350, img: "https://picsum.photos/400/260?random=105" },
-  { title: "Earthquake Relief — Swat Valley", category: "Disaster Relief", location: "Swat, KPK", date: "Oct 2023", desc: "Emergency relief kits, blankets, and medical supplies delivered to earthquake-affected families.", beneficiaries: 500, img: "https://picsum.photos/400/260?random=106" },
-  { title: "Prefab Homes — Rajanpur", category: "Housing", location: "Rajanpur, Punjab", date: "Jan 2024", desc: "50 prefabricated flood-resistant homes built for displaced families in Southern Punjab.", beneficiaries: 250, img: "https://picsum.photos/400/260?random=107" },
-  { title: "School Roof Restoration — Mirpurkhas", category: "Education", location: "Mirpurkhas, Sindh", date: "Feb 2024", desc: "Restored roofs and classrooms for 3 flood-damaged government schools serving 800 students.", beneficiaries: 800, img: "https://picsum.photos/400/260?random=108" },
-  { title: "Water Filtration Plant — Rahim Yar Khan", category: "Clean Water", location: "Rahim Yar Khan, Punjab", date: "Jun 2023", desc: "Community water filtration unit installed, eliminating waterborne diseases in a village of 400 people.", beneficiaries: 400, img: "https://picsum.photos/400/260?random=109" },
-  { title: "Cyclone Relief — Gwadar", category: "Disaster Relief", location: "Gwadar, Balochistan", date: "Nov 2023", desc: "Immediate relief for 150 fishing families hit by Cyclone Dana — nets, food, and temporary shelter.", beneficiaries: 750, img: "https://picsum.photos/400/260?random=110" },
-  { title: "Brick Homes — Jacobabad", category: "Housing", location: "Jacobabad, Sindh", date: "Apr 2024", desc: "25 permanent brick homes with proper roofing built for chronically poor families in rural Jacobabad.", beneficiaries: 125, img: "https://picsum.photos/400/260?random=111" },
-  { title: "Ramadan Food Packages — Nationwide", category: "Food Aid", location: "Multiple Districts", date: "Mar 2024", desc: "5,000 Ramadan food packages distributed across 8 districts during the holy month.", beneficiaries: 5000, img: "https://picsum.photos/400/260?random=112" },
-  { title: "Tent City Setup — Lal Suhanra", category: "Disaster Relief", location: "Bahawalpur, Punjab", date: "Sep 2022", desc: "600 tents erected for flood-displaced families awaiting permanent housing.", beneficiaries: 3000, img: "https://picsum.photos/400/260?random=131" },
-  { title: "Village Hand Pump — Lodhran", category: "Clean Water", location: "Lodhran, Punjab", date: "Jul 2023", desc: "Hand pump serving 300 villagers previously walking 2km daily for water.", beneficiaries: 300, img: "https://picsum.photos/400/260?random=132" },
-  { title: "Transitional Shelter — Nowshera", category: "Housing", location: "Nowshera, KPK", date: "Nov 2022", desc: "Transitional shelters for 40 families in KPK while permanent housing was being constructed.", beneficiaries: 200, img: "https://picsum.photos/400/260?random=133" },
-  { title: "Eid Food Packages — Karachi", category: "Food Aid", location: "Karachi, Sindh", date: "Apr 2023", desc: "1,500 Eid hampers distributed to deserving families in Karachi's katchi abadis.", beneficiaries: 1500, img: "https://picsum.photos/400/260?random=134" },
-  { title: "Borehole Drilling — Khuzdar", category: "Clean Water", location: "Khuzdar, Balochistan", date: "Aug 2023", desc: "Deep borehole drilled providing clean water to a community that had none for 3 years.", beneficiaries: 450, img: "https://picsum.photos/400/260?random=135" },
-  { title: "Emergency Shelter Kits — Zhob", category: "Disaster Relief", location: "Zhob, Balochistan", date: "Jan 2024", desc: "Emergency tarpaulins, ropes, and blankets for 100 families displaced by flash floods.", beneficiaries: 500, img: "https://picsum.photos/400/260?random=136" },
-  { title: "Mobile Medical Unit — Chaman", category: "Disaster Relief", location: "Chaman, Balochistan", date: "Mar 2024", desc: "Equipped medical van providing free checkups and medicines to 1,200 border community residents.", beneficiaries: 1200, img: "https://picsum.photos/400/260?random=137" },
-  { title: "Skills Center Setup — Multan", category: "Education", location: "Multan, Punjab", date: "Jun 2023", desc: "Vocational skills training center equipped with sewing machines for 50 widowed women.", beneficiaries: 100, img: "https://picsum.photos/400/260?random=138" }
-];
 
 export default function Dashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,7 +17,6 @@ export default function Dashboard() {
 
   const [projectsList, setProjectsList] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [seeding, setSeeding] = useState(false);
 
   // Form states
   const [id, setId] = useState<number | undefined>(undefined);
@@ -54,6 +29,10 @@ export default function Dashboard() {
   const [img, setImg] = useState("");
   const [featured, setFeatured] = useState(false);
   const [order, setOrder] = useState(1);
+
+  // Upload state
+  const [uploadingImg, setUploadingImg] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -83,7 +62,7 @@ export default function Dashboard() {
       });
       setProjectsList(sorted);
       setLoading(false);
-    }, 1000); // Small timeout to ensure data is fetched from firestore callback
+    }, 1000);
   };
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -121,6 +100,7 @@ export default function Dashboard() {
     setImg("");
     setFeatured(false);
     setOrder(projectsList.length + 1);
+    setUploadError("");
     setIsEditing(false);
   };
 
@@ -135,6 +115,7 @@ export default function Dashboard() {
     setImg(project.img);
     setFeatured((project as any).featured || false);
     setOrder((project as any).order || project.id);
+    setUploadError("");
     setIsEditing(true);
     
     window.scrollTo({ top: document.getElementById("project-form")?.offsetTop || 0, behavior: "smooth" });
@@ -149,10 +130,37 @@ export default function Dashboard() {
     }
   };
 
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size limit: 2MB = 2 * 1024 * 1024 bytes
+    const MAX_SIZE = 2 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      setUploadError("Image size exceeds 2MB limit. Please upload a smaller image.");
+      setImg("");
+      e.target.value = ""; // clear input
+      return;
+    }
+
+    setUploadError("");
+    setUploadingImg(true);
+    try {
+      const downloadUrl = await uploadProjectImage(file);
+      setImg(downloadUrl);
+      showToast("Image uploaded successfully!");
+    } catch (err) {
+      console.error(err);
+      setUploadError("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingImg(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !location || !date || !desc || !img) {
-      alert("Please fill in all fields.");
+      alert("Please fill in all fields (make sure image URL is set or image is uploaded).");
       return;
     }
 
@@ -175,32 +183,15 @@ export default function Dashboard() {
     setTimeout(() => loadData(), 800);
   };
 
-  const handleSeedProjects = async () => {
-    if (confirm("This will seed 20 realistic demo projects into your Firestore. Proceed?")) {
-      setSeeding(true);
-      try {
-        for (let i = 0; i < demoProjectsList.length; i++) {
-          const project = demoProjectsList[i];
-          await saveProject({
-            ...project,
-            featured: i < 6, // mark first 6 as featured
-            order: i + 1
-          });
-        }
-        showToast("Successfully seeded 20 projects!");
-        setTimeout(() => {
-          loadData();
-          setSeeding(false);
-        }, 1000);
-      } catch (e) {
-        console.error("Seeding error:", e);
-        setSeeding(false);
-        alert("Failed to seed projects.");
-      }
-    }
+  // Calculate high-level stats
+  const totalCount = projectsList.length;
+  const featuredCount = projectsList.filter(p => (p as any).featured).length;
+  const categoriesCount = {
+    Housing: projectsList.filter(p => p.category === "Housing").length,
+    Water: projectsList.filter(p => p.category === "Clean Water").length,
+    Relief: projectsList.filter(p => p.category === "Disaster Relief").length,
   };
 
-  // If user is not logged in, show Pine Green / Gold Login panel
   if (!isLoggedIn) {
     return (
       <div 
@@ -282,15 +273,6 @@ export default function Dashboard() {
     );
   }
 
-  // Calculate high-level stats
-  const totalCount = projectsList.length;
-  const featuredCount = projectsList.filter(p => (p as any).featured).length;
-  const categoriesCount = {
-    Housing: projectsList.filter(p => p.category === "Housing").length,
-    Water: projectsList.filter(p => p.category === "Clean Water").length,
-    Relief: projectsList.filter(p => p.category === "Disaster Relief").length,
-  };
-
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.titleArea}>
@@ -301,14 +283,6 @@ export default function Dashboard() {
           </p>
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
-          <button 
-            className="btn btn-outline" 
-            onClick={handleSeedProjects} 
-            disabled={seeding}
-            style={{ borderColor: "var(--gold)", color: "var(--gold)" }}
-          >
-            {seeding ? "⏳ Seeding..." : "🌱 Seed 20 Demo Projects"}
-          </button>
           <button className="btn btn-outline" onClick={resetForm}>
             ➕ Add New Project
           </button>
@@ -354,7 +328,7 @@ export default function Dashboard() {
               <div className={styles.emptyState}>
                 <div style={{ fontSize: "36px", marginBottom: "12px" }}>📂</div>
                 <h3>No projects in database</h3>
-                <p>Click "Seed 20 Demo Projects" to populate your dashboard.</p>
+                <p>Click "Add New Project" to populate your dashboard.</p>
               </div>
             ) : (
               <table className={styles.projectTable}>
@@ -484,15 +458,50 @@ export default function Dashboard() {
 
                 <div className={styles.formFullWidth}>
                   <div className={styles.inputGroup}>
-                    <label className={styles.label}>Image URL *</label>
+                    <label className={styles.label}>Project Image URL</label>
                     <input
                       className={styles.input}
                       type="text"
                       placeholder="e.g., https://picsum.photos/400/260?random=105"
                       value={img}
                       onChange={(e) => setImg(e.target.value)}
-                      required
                     />
+                    
+                    <div style={{ margin: "16px 0", fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
+                      <span>OR UPLOAD IMAGE FILE</span>
+                      <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
+                    </div>
+
+                    <label className={styles.label}>Upload Image File (Max 2MB)</label>
+                    <input
+                      className={styles.input}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFileChange}
+                    />
+                    {uploadingImg && (
+                      <span style={{ fontSize: "12px", color: "var(--gold)", fontWeight: 600, marginTop: "4px", display: "block" }}>
+                        Uploading to Firebase Storage... ⏳
+                      </span>
+                    )}
+                    {uploadError && (
+                      <span style={{ fontSize: "12px", color: "#ef4444", fontWeight: 500, marginTop: "4px", display: "block" }}>
+                        ❌ {uploadError}
+                      </span>
+                    )}
+                    {img && (
+                      <div style={{ marginTop: "14px" }}>
+                        <span style={{ fontSize: "12px", color: "var(--green-mid)", display: "block", marginBottom: "4px" }}>
+                          ✓ Image Preview:
+                        </span>
+                        <img 
+                          src={img} 
+                          alt="Uploaded Preview" 
+                          style={{ width: "100%", maxHeight: "120px", objectFit: "cover", borderRadius: "8px", border: "1px solid var(--card-border)" }} 
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -533,7 +542,12 @@ export default function Dashboard() {
               </div>
 
               <div className={styles.buttonGroup}>
-                <button type="submit" className="btn btn-green" style={{ flex: 1 }}>
+                <button 
+                  type="submit" 
+                  className="btn btn-green" 
+                  style={{ flex: 1 }}
+                  disabled={uploadingImg}
+                >
                   {isEditing ? "Save Changes" : "Create Project"}
                 </button>
                 {isEditing && (
