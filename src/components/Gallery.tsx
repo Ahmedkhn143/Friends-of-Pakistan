@@ -1,11 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { galleryImgs } from "@/data/gallery";
+import { getProjects } from "@/utils/projectDb";
+
+interface GalleryItem {
+  src: string;
+  projectId?: number;
+  projectTitle?: string;
+  isStatic?: boolean;
+}
 
 export default function Gallery() {
+  const router = useRouter();
+  const [items, setItems] = useState<GalleryItem[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lbIndex, setLbIndex] = useState(0);
+
+  useEffect(() => {
+    // 1. Static images from gallery.ts
+    const staticItems: GalleryItem[] = galleryImgs.map((src) => ({
+      src,
+      isStatic: true,
+    }));
+
+    // 2. Dynamic images from projects in database
+    const dbProjects = getProjects();
+    const projectItems: GalleryItem[] = dbProjects.map((p) => ({
+      src: p.img,
+      projectId: p.id,
+      projectTitle: p.title,
+      isStatic: false,
+    }));
+
+    // Combine: Projects first, then static images
+    setItems([...projectItems, ...staticItems]);
+  }, []);
+
+  const handleItemClick = (item: GalleryItem, index: number) => {
+    if (!item.isStatic && item.projectTitle) {
+      // Redirect to projects page and automatically search/filter this project
+      router.push(`/projects?search=${encodeURIComponent(item.projectTitle)}`);
+    } else {
+      // Open standard lightbox for static images
+      openLightbox(index);
+    }
+  };
 
   const openLightbox = (index: number) => {
     setLbIndex(index);
@@ -20,17 +61,46 @@ export default function Gallery() {
 
   const navigateLb = (direction: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    let newIndex = (lbIndex + direction + galleryImgs.length) % galleryImgs.length;
+    let newIndex = (lbIndex + direction + items.length) % items.length;
     setLbIndex(newIndex);
   };
 
   return (
     <>
       <div className="gallery-grid" id="galleryGrid">
-        {galleryImgs.map((src, i) => (
-          <div key={i} className="gallery-item" onClick={() => openLightbox(i)}>
-            <img src={src} alt={`Gallery image ${i + 1}`} loading="lazy" />
-            <div className="gallery-overlay">🔍</div>
+        {items.map((item, i) => (
+          <div 
+            key={i} 
+            className="gallery-item" 
+            onClick={() => handleItemClick(item, i)}
+            style={{ cursor: "pointer" }}
+            title={item.isStatic ? "Zoom Image" : `View Project: ${item.projectTitle}`}
+          >
+            <img src={item.src} alt={item.projectTitle || `Gallery image ${i + 1}`} loading="lazy" />
+            <div className="gallery-overlay">
+              {item.isStatic ? "🔍" : "🔗"}
+            </div>
+            {!item.isStatic && (
+              <div 
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  background: "rgba(6, 78, 59, 0.9)",
+                  color: "white",
+                  padding: "8px 12px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  zIndex: 2,
+                }}
+              >
+                🇵🇰 {item.projectTitle}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -42,11 +112,11 @@ export default function Gallery() {
       >
         <button className="lb-close" onClick={closeLightbox}>×</button>
         <button className="lb-nav lb-prev" onClick={(e) => navigateLb(-1, e)}>‹</button>
-        {lightboxOpen && (
+        {lightboxOpen && items[lbIndex] && (
           <img 
             id="lbImg" 
             className="lb-img" 
-            src={galleryImgs[lbIndex]} 
+            src={items[lbIndex].src} 
             alt="Gallery item" 
             onClick={(e) => e.stopPropagation()}
           />

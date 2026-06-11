@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import SectionHeading from "@/components/SectionHeading";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -7,10 +10,24 @@ import CauseCard from "@/components/CauseCard";
 import ProjectCard from "@/components/ProjectCard";
 import TestimonialCard from "@/components/TestimonialCard";
 // import ImpactCalculator from "@/components/ImpactCalculator";
-import { projects } from "@/data/projects";
+import { Project } from "@/data/projects";
+import { getProjects } from "@/utils/projectDb";
 
 export default function Home() {
-  const featuredProjects = projects.slice(0, 6);
+  const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    const data = getProjects();
+    // Sort projects: Featured first, then order
+    const sorted = [...data].sort((a, b) => {
+      const aFeatured = (a as any).featured ? 1 : 0;
+      const bFeatured = (b as any).featured ? 1 : 0;
+      if (aFeatured !== bFeatured) return bFeatured - aFeatured;
+      return ((a as any).order ?? 0) - ((b as any).order ?? 0);
+    });
+    // Slice top 6 for the homepage recent work
+    setFeaturedProjects(sorted.slice(0, 6));
+  }, []);
 
   return (
     <>

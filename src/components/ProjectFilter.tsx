@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { Project, ProjectCategory, projects, extraProjects } from "@/data/projects";
+import { useState, useEffect } from "react";
+import { Project, ProjectCategory } from "@/data/projects";
+import { getProjects } from "@/utils/projectDb";
 import ProjectCard from "./ProjectCard";
 import styles from "./AdvancedFilter.module.css";
 
@@ -9,9 +10,29 @@ export default function ProjectFilter() {
   const [category, setCategory] = useState<ProjectCategory | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [loadedMore, setLoadedMore] = useState(false);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
 
-  const allProjects = [...projects, ...extraProjects];
-  
+  useEffect(() => {
+    const data = getProjects();
+    // Sort projects: Featured first, then order
+    const sorted = [...data].sort((a, b) => {
+      const aFeatured = (a as any).featured ? 1 : 0;
+      const bFeatured = (b as any).featured ? 1 : 0;
+      if (aFeatured !== bFeatured) return bFeatured - aFeatured;
+      return ((a as any).order ?? 0) - ((b as any).order ?? 0);
+    });
+    setAllProjects(sorted);
+
+    // Read search parameter from URL
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const searchParam = params.get("search");
+      if (searchParam) {
+        setSearchQuery(searchParam);
+      }
+    }
+  }, []);
+
   const categories = [
     { id: "all", label: "All" },
     { id: "Housing", label: "Housing" },
@@ -21,7 +42,7 @@ export default function ProjectFilter() {
     { id: "Food Aid", label: "Food Aid" },
   ];
 
-  let displayProjects = loadedMore ? allProjects : projects;
+  let displayProjects = loadedMore ? allProjects : allProjects.slice(0, 12);
   
   if (category !== "all") {
     displayProjects = displayProjects.filter(p => p.category === category);
@@ -116,7 +137,7 @@ export default function ProjectFilter() {
         )}
       </div>
       
-      {!loadedMore && displayProjects.length >= projects.length && (
+      {!loadedMore && allProjects.length > 12 && (
         <div className="load-more-wrap">
           <button className="btn btn-green" onClick={() => setLoadedMore(true)}>
             Load More Projects
