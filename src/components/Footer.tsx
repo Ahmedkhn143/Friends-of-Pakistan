@@ -6,18 +6,17 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div>
-            <div className="footer-brand" style={{ marginBottom: "16px" }}>
+            <div className="footer-brand" style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "16px" }}>
               <img 
-                src="/logo.jpg" 
-                alt="Friends of Pakistan Logo" 
+                src="/logo_white.png" 
+                alt="Handshake Logo Icon" 
                 style={{ 
-                  height: "55px", 
+                  height: "38px", 
                   width: "auto", 
-                  borderRadius: "6px",
-                  display: "block",
-                  mixBlendMode: "screen"
+                  display: "block"
                 }} 
               />
+              <span>Friends of Pakistan</span>
             </div>
             <p className="footer-tagline">
               Serving humanity through housing, clean water, and disaster relief since 2021. Every project. Every family. Every life — it matters.

@@ -24,22 +24,23 @@ export default function Navbar() {
     <>
       <nav id="navbar" className={scrolled ? "scrolled" : ""}>
         <div className="nav-inner" style={{ width: "100%" }}>
-          <Link href="/" className="nav-logo" onClick={closeMenu} aria-label="Friends of Pakistan">
+          <Link href="/" className="nav-logo" onClick={closeMenu}>
             <img 
-              src="/logo.jpg" 
-              alt="Friends of Pakistan Logo" 
+              src="/logo_dark.png" 
+              alt="Handshake Logo Icon" 
               style={{ 
-                height: "45px", 
+                height: "36px", 
                 width: "auto", 
-                borderRadius: "6px",
                 display: "block",
-                filter: "invert(1)",
-                mixBlendMode: "multiply"
+                marginRight: "8px"
               }} 
             />
+            <div className="nav-logo-text">
+              Friends of Pakistan<span>Serving humanity</span>
+            </div>
           </Link>
 
-          <div className="nav-links">
+          <div className="nav-links" style={{ marginLeft: "48px", marginRight: "auto" }}>
             <Link href="/" className={`nav-link ${pathname === "/" ? "active" : ""}`}>Home</Link>
             <Link href="/about" className={`nav-link ${pathname === "/about" ? "active" : ""}`}>About</Link>
             <Link href="/projects" className={`nav-link ${pathname === "/projects" ? "active" : ""}`}>Projects</Link>
