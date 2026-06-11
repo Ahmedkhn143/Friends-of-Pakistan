@@ -661,6 +661,11 @@ button {
   border-left: 1px solid var(--card-border);
 }
 
+.stats-grid .reveal {
+  height: auto;
+  display: block;
+}
+
 .stat-item {
   padding: 44px 32px;
   border-right: 1px solid var(--card-border);
