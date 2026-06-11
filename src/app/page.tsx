@@ -10,23 +10,39 @@ import CauseCard from "@/components/CauseCard";
 import ProjectCard from "@/components/ProjectCard";
 import TestimonialCard from "@/components/TestimonialCard";
 import { Project } from "@/data/projects";
-import { getProjects } from "@/utils/projectDb";
+import { getProjects, fetchProjectsFromFirebase, getReviews, fetchReviewsFromFirebase, ReviewItem } from "@/utils/projectDb";
 import ImpactCalculator from "@/components/ImpactCalculator";
 
 export default function Home() {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
+  const [reviewsList, setReviewsList] = useState<ReviewItem[]>([]);
 
   useEffect(() => {
-    const data = getProjects();
-    // Sort projects: Featured first, then order
-    const sorted = [...data].sort((a, b) => {
-      const aFeatured = (a as any).featured ? 1 : 0;
-      const bFeatured = (b as any).featured ? 1 : 0;
-      if (aFeatured !== bFeatured) return bFeatured - aFeatured;
-      return ((a as any).order ?? 0) - ((b as any).order ?? 0);
+    // 1. Handle projects dynamic load
+    const loadProjects = (list: Project[]) => {
+      const sorted = [...list].sort((a, b) => {
+        const aFeatured = (a as any).featured ? 1 : 0;
+        const bFeatured = (b as any).featured ? 1 : 0;
+        if (aFeatured !== bFeatured) return bFeatured - aFeatured;
+        return ((a as any).order ?? 0) - ((b as any).order ?? 0);
+      });
+      setFeaturedProjects(sorted.slice(0, 6));
+    };
+
+    loadProjects(getProjects());
+    fetchProjectsFromFirebase().then((fresh) => {
+      if (fresh && fresh.length > 0) {
+        loadProjects(fresh);
+      }
     });
-    // Slice top 6 for the homepage recent work
-    setFeaturedProjects(sorted.slice(0, 6));
+
+    // 2. Handle reviews dynamic load
+    setReviewsList(getReviews());
+    fetchReviewsFromFirebase().then((freshReviews) => {
+      if (freshReviews && freshReviews.length > 0) {
+        setReviewsList(freshReviews);
+      }
+    });
   }, []);
 
   return (
@@ -241,29 +257,17 @@ export default function Home() {
             title="What Our Donors Say" 
           />
           <div className="testi-grid">
-            <TestimonialCard 
-              stars="★★★★★"
-              quote="I've donated to many organizations, but Friends of Pakistan is different. They send field photos within days. You can see exactly where your money goes."
-              avatar="AK"
-              name="Ahmed Khan"
-              loc="Donor since 2022 · Lahore"
-            />
-            <TestimonialCard 
-              stars="★★★★★"
-              quote="As a corporate partner, we needed full transparency and documented impact. Friends of Pakistan delivered quarterly reports with GPS-tagged photos. Exceptional."
-              avatar="SR"
-              name="Sana Rehman"
-              loc="Corporate Partner · Karachi"
-              delay={1}
-            />
-            <TestimonialCard 
-              stars="★★★★★"
-              quote="My monthly contribution of Rs 5,000 has funded two water pumps. I see real people drinking clean water because of it. This is what giving should feel like."
-              avatar="MF"
-              name="Muhammad Farooq"
-              loc="Regular Donor · Islamabad"
-              delay={2}
-            />
+            {reviewsList.map((rev, i) => (
+              <TestimonialCard 
+                key={rev.id}
+                stars={rev.stars}
+                quote={rev.quote}
+                avatar={rev.avatar}
+                name={rev.name}
+                loc={rev.loc}
+                delay={i % 3}
+              />
+            ))}
           </div>
         </div>
       </section>

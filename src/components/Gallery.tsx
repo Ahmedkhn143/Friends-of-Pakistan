@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { galleryImgs } from "@/data/gallery";
-import { getProjects } from "@/utils/projectDb";
+import { getProjects, fetchProjectsFromFirebase } from "@/utils/projectDb";
+import { Project } from "@/data/projects";
 
 interface GalleryItem {
   src: string;
@@ -25,17 +26,27 @@ export default function Gallery() {
       isStatic: true,
     }));
 
-    // 2. Dynamic images from projects in database
-    const dbProjects = getProjects();
-    const projectItems: GalleryItem[] = dbProjects.map((p) => ({
-      src: p.img,
-      projectId: p.id,
-      projectTitle: p.title,
-      isStatic: false,
-    }));
+    // 2. Update gallery helper
+    const updateGallery = (projectsList: Project[]) => {
+      const projectItems: GalleryItem[] = projectsList.map((p) => ({
+        src: p.img,
+        projectId: p.id,
+        projectTitle: p.title,
+        isStatic: false,
+      }));
+      // Combine: Projects first, then static images
+      setItems([...projectItems, ...staticItems]);
+    };
 
-    // Combine: Projects first, then static images
-    setItems([...projectItems, ...staticItems]);
+    // Load initial cached projects
+    updateGallery(getProjects());
+
+    // Fetch fresh database items
+    fetchProjectsFromFirebase().then((fresh) => {
+      if (fresh && fresh.length > 0) {
+        updateGallery(fresh);
+      }
+    });
   }, []);
 
   const handleItemClick = (item: GalleryItem, index: number) => {

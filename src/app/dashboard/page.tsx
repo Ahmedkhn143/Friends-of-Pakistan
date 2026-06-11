@@ -2,12 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { Project, ProjectCategory } from "@/data/projects";
-import { getProjects, saveProject, deleteProject, uploadProjectImage } from "@/utils/projectDb";
+import { 
+  getProjects, saveProject, deleteProject, uploadProjectImage,
+  getVideos, saveVideo, deleteVideo, VideoItem,
+  getReviews, saveReview, deleteReview, ReviewItem
+} from "@/utils/projectDb";
 import styles from "./dashboard.module.css";
 
 // Admin Credentials
 const ADMIN_EMAIL = "admin@friendsofpakistan.org";
 const ADMIN_PASSWORD = "FOP-Admin-Secure-2026!";
+
+type Tab = "projects" | "videos" | "reviews";
 
 export default function Dashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -15,20 +21,41 @@ export default function Dashboard() {
   const [passwordInput, setPasswordInput] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  const [projectsList, setProjectsList] = useState<Project[]>([]);
+  const [activeTab, setActiveTab] = useState<Tab>("projects");
   const [loading, setLoading] = useState(true);
 
-  // Form states
-  const [id, setId] = useState<number | undefined>(undefined);
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<ProjectCategory>("Housing");
-  const [location, setLocation] = useState("");
-  const [date, setDate] = useState("");
-  const [desc, setDesc] = useState("");
-  const [beneficiaries, setBeneficiaries] = useState(0);
-  const [img, setImg] = useState("");
-  const [featured, setFeatured] = useState(false);
-  const [order, setOrder] = useState(1);
+  // Stats
+  const [projectsList, setProjectsList] = useState<Project[]>([]);
+  const [videosList, setVideosList] = useState<VideoItem[]>([]);
+  const [reviewsList, setReviewList] = useState<ReviewItem[]>([]);
+
+  // ==================== FORM STATES ====================
+  // Projects
+  const [projId, setProjId] = useState<number | undefined>(undefined);
+  const [projTitle, setProjTitle] = useState("");
+  const [projCategory, setProjCategory] = useState<ProjectCategory>("Housing");
+  const [projLocation, setProjLocation] = useState("");
+  const [projDate, setProjDate] = useState("");
+  const [projDesc, setProjDesc] = useState("");
+  const [projBeneficiaries, setProjBeneficiaries] = useState(0);
+  const [projImg, setProjImg] = useState("");
+  const [projFeatured, setProjFeatured] = useState(false);
+  const [projOrder, setProjOrder] = useState(1);
+
+  // Videos
+  const [vidId, setVidId] = useState<number | undefined>(undefined);
+  const [vidTitle, setVidTitle] = useState("");
+  const [vidDuration, setVidDuration] = useState("5:00");
+  const [vidImg, setVidImg] = useState("");
+  const [vidUrl, setVidUrl] = useState("");
+
+  // Reviews
+  const [revId, setRevId] = useState<number | undefined>(undefined);
+  const [revName, setRevName] = useState("");
+  const [revStars, setRevStars] = useState("★★★★★");
+  const [revQuote, setRevQuote] = useState("");
+  const [revAvatar, setRevAvatar] = useState("");
+  const [revLoc, setRevLoc] = useState("");
 
   // Upload state
   const [uploadingImg, setUploadingImg] = useState(false);
@@ -38,31 +65,37 @@ export default function Dashboard() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // Check login session
     if (typeof window !== "undefined") {
       const logged = sessionStorage.getItem("fop_admin_logged_in") === "true";
       if (logged) {
         setIsLoggedIn(true);
-        loadData();
+        loadAllData();
       } else {
         setLoading(false);
       }
     }
   }, []);
 
-  const loadData = () => {
+  const loadAllData = () => {
     setLoading(true);
-    const data = getProjects();
+    // Trigger callbacks
+    const projects = getProjects();
+    const videos = getVideos();
+    const reviews = getReviews();
+
     setTimeout(() => {
-      const sorted = [...data].sort((a, b) => {
-        const aFeatured = (a as any).featured ? 1 : 0;
-        const bFeatured = (b as any).featured ? 1 : 0;
-        if (aFeatured !== bFeatured) return bFeatured - aFeatured;
-        return ((a as any).order ?? 0) - ((b as any).order ?? 0);
-      });
-      setProjectsList(sorted);
+      setProjectsList(
+        [...projects].sort((a, b) => {
+          const aFeatured = (a as any).featured ? 1 : 0;
+          const bFeatured = (b as any).featured ? 1 : 0;
+          if (aFeatured !== bFeatured) return bFeatured - aFeatured;
+          return ((a as any).order ?? 0) - ((b as any).order ?? 0);
+        })
+      );
+      setVideosList(videos);
+      setReviewList(reviews);
       setLoading(false);
-    }, 1000);
+    }, 1200);
   };
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -71,7 +104,7 @@ export default function Dashboard() {
       sessionStorage.setItem("fop_admin_logged_in", "true");
       setIsLoggedIn(true);
       setLoginError("");
-      loadData();
+      loadAllData();
     } else {
       setLoginError("Invalid email or password. Please try again.");
     }
@@ -89,57 +122,195 @@ export default function Dashboard() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const resetForm = () => {
-    setId(undefined);
-    setTitle("");
-    setCategory("Housing");
-    setLocation("");
-    setDate("");
-    setDesc("");
-    setBeneficiaries(0);
-    setImg("");
-    setFeatured(false);
-    setOrder(projectsList.length + 1);
+  const resetAllForms = () => {
+    // Projects reset
+    setProjId(undefined);
+    setProjTitle("");
+    setProjCategory("Housing");
+    setProjLocation("");
+    setProjDate("");
+    setProjDesc("");
+    setProjBeneficiaries(0);
+    setProjImg("");
+    setProjFeatured(false);
+    setProjOrder(projectsList.length + 1);
+
+    // Videos reset
+    setVidId(undefined);
+    setVidTitle("");
+    setVidDuration("5:00");
+    setVidImg("");
+    setVidUrl("");
+
+    // Reviews reset
+    setRevId(undefined);
+    setRevName("");
+    setRevStars("★★★★★");
+    setRevQuote("");
+    setRevAvatar("");
+    setRevLoc("");
+
     setUploadError("");
     setIsEditing(false);
   };
 
-  const handleEdit = (project: Project) => {
-    setId(project.id);
-    setTitle(project.title);
-    setCategory(project.category);
-    setLocation(project.location);
-    setDate(project.date);
-    setDesc(project.desc);
-    setBeneficiaries(project.beneficiaries);
-    setImg(project.img);
-    setFeatured((project as any).featured || false);
-    setOrder((project as any).order || project.id);
-    setUploadError("");
-    setIsEditing(true);
-    
-    window.scrollTo({ top: document.getElementById("project-form")?.offsetTop || 0, behavior: "smooth" });
+  // ==================== SUBMIT HANDLERS ====================
+  const handleProjectSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!projTitle || !projLocation || !projDate || !projDesc || !projImg) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    const payload = {
+      id: projId,
+      title: projTitle,
+      category: projCategory,
+      location: projLocation,
+      date: projDate,
+      desc: projDesc,
+      beneficiaries: Number(projBeneficiaries),
+      img: projImg,
+      featured: projFeatured,
+      order: Number(projOrder),
+    };
+
+    saveProject(payload);
+    showToast(isEditing ? "Project updated successfully!" : "Project added successfully!");
+    resetAllForms();
+    setTimeout(() => loadAllData(), 800);
   };
 
-  const handleDelete = (projectId: number) => {
+  const handleVideoSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!vidTitle || !vidUrl) {
+      alert("Please fill in the Video Title and YouTube Link.");
+      return;
+    }
+
+    // Convert standard youtube link to embed url if needed
+    let finalUrl = vidUrl;
+    if (vidUrl.includes("watch?v=")) {
+      const vid = vidUrl.split("v=")[1]?.split("&")[0];
+      if (vid) finalUrl = `https://www.youtube.com/embed/${vid}`;
+    } else if (vidUrl.includes("youtu.be/")) {
+      const vid = vidUrl.split("youtu.be/")[1]?.split("?")[0];
+      if (vid) finalUrl = `https://www.youtube.com/embed/${vid}`;
+    }
+
+    const payload = {
+      id: vidId,
+      title: vidTitle,
+      duration: vidDuration || "5:00",
+      img: vidImg || "https://images.unsplash.com/photo-1469504512102-900f29606341?w=800&q=80",
+      videoUrl: finalUrl
+    };
+
+    saveVideo(payload);
+    showToast(isEditing ? "Video story updated!" : "Video story added!");
+    resetAllForms();
+    setTimeout(() => loadAllData(), 800);
+  };
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!revName || !revQuote || !revLoc) {
+      alert("Please fill in Name, Review Description, and Location details.");
+      return;
+    }
+
+    const payload = {
+      id: revId,
+      stars: revStars,
+      quote: revQuote,
+      avatar: revAvatar || revName.substring(0, 2).toUpperCase(),
+      name: revName,
+      loc: revLoc
+    };
+
+    saveReview(payload);
+    showToast(isEditing ? "Review updated!" : "Review added!");
+    resetAllForms();
+    setTimeout(() => loadAllData(), 800);
+  };
+
+  // ==================== EDIT & DELETE HANDLERS ====================
+  const handleProjectEdit = (p: Project) => {
+    setProjId(p.id);
+    setProjTitle(p.title);
+    setProjCategory(p.category);
+    setProjLocation(p.location);
+    setProjDate(p.date);
+    setProjDesc(p.desc);
+    setProjBeneficiaries(p.beneficiaries);
+    setProjImg(p.img);
+    setProjFeatured((p as any).featured || false);
+    setProjOrder((p as any).order || p.id);
+    setIsEditing(true);
+    scrollToForm();
+  };
+
+  const handleVideoEdit = (v: VideoItem) => {
+    setVidId(v.id);
+    setVidTitle(v.title);
+    setVidDuration(v.duration);
+    setVidImg(v.img);
+    setVidUrl(v.videoUrl);
+    setIsEditing(true);
+    scrollToForm();
+  };
+
+  const handleReviewEdit = (r: ReviewItem) => {
+    setRevId(r.id);
+    setRevName(r.name);
+    setRevStars(r.stars);
+    setRevQuote(r.quote);
+    setRevAvatar(r.avatar);
+    setRevLoc(r.loc);
+    setIsEditing(true);
+    scrollToForm();
+  };
+
+  const handleProjectDelete = (projectId: number) => {
     if (confirm("Are you sure you want to delete this project?")) {
       deleteProject(projectId);
       showToast("Project deleted successfully!");
-      setTimeout(() => loadData(), 800);
-      if (id === projectId) resetForm();
+      setTimeout(() => loadAllData(), 800);
+      resetAllForms();
     }
   };
 
-  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoDelete = (videoId: number) => {
+    if (confirm("Are you sure you want to delete this video?")) {
+      deleteVideo(videoId);
+      showToast("Video story deleted successfully!");
+      setTimeout(() => loadAllData(), 800);
+      resetAllForms();
+    }
+  };
+
+  const handleReviewDelete = (reviewId: number) => {
+    if (confirm("Are you sure you want to delete this review?")) {
+      deleteReview(reviewId);
+      showToast("Review deleted successfully!");
+      setTimeout(() => loadAllData(), 800);
+      resetAllForms();
+    }
+  };
+
+  const scrollToForm = () => {
+    window.scrollTo({ top: document.getElementById("entry-form")?.offsetTop || 0, behavior: "smooth" });
+  };
+
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>, fieldSetter: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check size limit: 2MB = 2 * 1024 * 1024 bytes
     const MAX_SIZE = 2 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
       setUploadError("Image size exceeds 2MB limit. Please upload a smaller image.");
-      setImg("");
-      e.target.value = ""; // clear input
+      fieldSetter("");
+      e.target.value = "";
       return;
     }
 
@@ -147,7 +318,7 @@ export default function Dashboard() {
     setUploadingImg(true);
     try {
       const downloadUrl = await uploadProjectImage(file);
-      setImg(downloadUrl);
+      fieldSetter(downloadUrl);
       showToast("Image uploaded successfully!");
     } catch (err) {
       console.error(err);
@@ -155,41 +326,6 @@ export default function Dashboard() {
     } finally {
       setUploadingImg(false);
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !location || !date || !desc || !img) {
-      alert("Please fill in all fields (make sure image URL is set or image is uploaded).");
-      return;
-    }
-
-    const payload = {
-      id,
-      title,
-      category,
-      location,
-      date,
-      desc,
-      beneficiaries: Number(beneficiaries),
-      img,
-      featured,
-      order: Number(order),
-    };
-
-    saveProject(payload);
-    showToast(isEditing ? "Project updated successfully!" : "Project added successfully!");
-    resetForm();
-    setTimeout(() => loadData(), 800);
-  };
-
-  // Calculate high-level stats
-  const totalCount = projectsList.length;
-  const featuredCount = projectsList.filter(p => (p as any).featured).length;
-  const categoriesCount = {
-    Housing: projectsList.filter(p => p.category === "Housing").length,
-    Water: projectsList.filter(p => p.category === "Clean Water").length,
-    Relief: projectsList.filter(p => p.category === "Disaster Relief").length,
   };
 
   if (!isLoggedIn) {
@@ -221,7 +357,7 @@ export default function Dashboard() {
               Admin Login
             </h2>
             <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", marginTop: "4px" }}>
-              Friends of Pakistan Humanitarian Portal
+              Friends of Pakistan Portal CMS
             </p>
           </div>
 
@@ -277,286 +413,368 @@ export default function Dashboard() {
     <div className={styles.dashboardContainer}>
       <div className={styles.titleArea}>
         <div>
-          <h1 className={styles.dashboardHeading}>Project Dashboard</h1>
+          <h1 className={styles.dashboardHeading}>Friends of Pakistan CMS</h1>
           <p style={{ color: "var(--text-muted)", marginTop: "4px" }}>
-            Add, update, or remove direct-impact humanitarian projects
+            Select a tab below to manage portal dynamic content
           </p>
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
-          <button className="btn btn-outline" onClick={resetForm}>
-            ➕ Add New Project
-          </button>
           <button className="btn btn-outline" style={{ borderColor: "#ef4444", color: "#ef4444" }} onClick={handleLogout}>
             Logout
           </button>
         </div>
       </div>
 
-      {/* Stats Summary Panel */}
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Total Projects</div>
-          <div className={styles.statValue}>{loading ? "..." : totalCount}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Featured (Shows First)</div>
-          <div className={styles.statValue}>{loading ? "..." : featuredCount}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Housing Projects</div>
-          <div className={styles.statValue}>{loading ? "..." : categoriesCount.Housing}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Clean Water / Relief</div>
-          <div className={styles.statValue}>
-            {loading ? "..." : categoriesCount.Water + categoriesCount.Relief}
-          </div>
-        </div>
+      {/* Tabs Selector */}
+      <div style={{ display: "flex", gap: "8px", marginBottom: "32px", borderBottom: "1px solid var(--card-border)", paddingBottom: "12px" }}>
+        <button 
+          onClick={() => { setActiveTab("projects"); resetAllForms(); }}
+          style={{
+            padding: "10px 20px", borderRadius: "100px", border: "none", fontSize: "14px", fontWeight: 600,
+            background: activeTab === "projects" ? "var(--green-dark)" : "none",
+            color: activeTab === "projects" ? "white" : "var(--text-muted)"
+          }}
+        >
+          📂 Manage Projects ({projectsList.length})
+        </button>
+        <button 
+          onClick={() => { setActiveTab("videos"); resetAllForms(); }}
+          style={{
+            padding: "10px 20px", borderRadius: "100px", border: "none", fontSize: "14px", fontWeight: 600,
+            background: activeTab === "videos" ? "var(--green-dark)" : "none",
+            color: activeTab === "videos" ? "white" : "var(--text-muted)"
+          }}
+        >
+          🎬 Video Stories ({videosList.length})
+        </button>
+        <button 
+          onClick={() => { setActiveTab("reviews"); resetAllForms(); }}
+          style={{
+            padding: "10px 20px", borderRadius: "100px", border: "none", fontSize: "14px", fontWeight: 600,
+            background: activeTab === "reviews" ? "var(--green-dark)" : "none",
+            color: activeTab === "reviews" ? "white" : "var(--text-muted)"
+          }}
+        >
+          ⭐ Donor Reviews ({reviewsList.length})
+        </button>
       </div>
 
       <div className={styles.mainLayout}>
-        {/* Left column: Projects Table List */}
+        {/* Left Column: List/Table depending on active tab */}
         <div>
           <div className={styles.tableContainer}>
             <div style={{ padding: "20px", borderBottom: "1px solid var(--card-border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h2 className={styles.cardTitle} style={{ margin: 0 }}>All Projects</h2>
-              <button className="editBtn" onClick={loadData}>🔄 Reload</button>
+              <h2 className={styles.cardTitle} style={{ margin: 0 }}>
+                {activeTab === "projects" && "Current Projects"}
+                {activeTab === "videos" && "Video Stories"}
+                {activeTab === "reviews" && "Donor Testimonials"}
+              </h2>
+              <button className="editBtn" onClick={loadAllData}>🔄 Reload</button>
             </div>
+
             {loading ? (
-              <div style={{ padding: "40px", textAlign: "center" }}>Loading projects from Firestore...</div>
-            ) : projectsList.length === 0 ? (
-              <div className={styles.emptyState}>
-                <div style={{ fontSize: "36px", marginBottom: "12px" }}>📂</div>
-                <h3>No projects in database</h3>
-                <p>Click "Add New Project" to populate your dashboard.</p>
-              </div>
+              <div style={{ padding: "40px", textAlign: "center" }}>Loading items from Firestore...</div>
             ) : (
-              <table className={styles.projectTable}>
-                <thead>
-                  <tr>
-                    <th>Title & Location</th>
-                    <th>Category</th>
-                    <th>Priority (Order)</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {projectsList.map((project) => (
-                    <tr key={project.id} className={styles.projectRow}>
-                      <td>
-                        <div className={styles.projectTitleCell}>{project.title}</div>
-                        <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-                          📍 {project.location} ({project.date})
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`${styles.badge} ${styles.regularBadge}`}>
-                          {project.category}
-                        </span>
-                      </td>
-                      <td style={{ textAlign: "center" }}>
-                        {(project as any).order ?? project.id}
-                      </td>
-                      <td>
-                        {(project as any).featured ? (
-                          <span className={`${styles.badge} ${styles.featuredBadge}`}>
-                            ⭐ Featured
-                          </span>
-                        ) : (
-                          <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Regular</span>
-                        )}
-                      </td>
-                      <td>
-                        <div className={styles.actionsCell}>
-                          <button className={styles.editBtn} onClick={() => handleEdit(project)}>
-                            Edit
-                          </button>
-                          <button className={styles.deleteBtn} onClick={() => handleDelete(project.id)}>
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <>
+                {/* 1. PROJECTS TAB TABLE */}
+                {activeTab === "projects" && (
+                  projectsList.length === 0 ? (
+                    <div className={styles.emptyState}>No projects added yet.</div>
+                  ) : (
+                    <table className={styles.projectTable}>
+                      <thead>
+                        <tr>
+                          <th>Title & Location</th>
+                          <th>Category</th>
+                          <th>Featured</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {projectsList.map((p) => (
+                          <tr key={p.id} className={styles.projectRow}>
+                            <td>
+                              <div className={styles.projectTitleCell}>{p.title}</div>
+                              <div style={{ fontSize: "12px" }}>📍 {p.location}</div>
+                            </td>
+                            <td><span className={`${styles.badge} ${styles.regularBadge}`}>{p.category}</span></td>
+                            <td>{(p as any).featured ? "⭐ Yes" : "No"}</td>
+                            <td>
+                              <div className={styles.actionsCell}>
+                                <button className={styles.editBtn} onClick={() => handleProjectEdit(p)}>Edit</button>
+                                <button className={styles.deleteBtn} onClick={() => handleProjectDelete(p.id)}>Delete</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )
+                )}
+
+                {/* 2. VIDEOS TAB TABLE */}
+                {activeTab === "videos" && (
+                  videosList.length === 0 ? (
+                    <div className={styles.emptyState}>No video stories added yet.</div>
+                  ) : (
+                    <table className={styles.projectTable}>
+                      <thead>
+                        <tr>
+                          <th>Video Title</th>
+                          <th>Duration</th>
+                          <th>Thumbnail Preview</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {videosList.map((v) => (
+                          <tr key={v.id} className={styles.projectRow}>
+                            <td>
+                              <div className={styles.projectTitleCell}>{v.title}</div>
+                              <div style={{ fontSize: "11px", color: "var(--text-muted)", wordBreak: "break-all" }}>
+                                🔗 {v.videoUrl}
+                              </div>
+                            </td>
+                            <td>{v.duration}</td>
+                            <td>
+                              <img src={v.img} alt="Thumb" style={{ width: "80px", height: "45px", objectFit: "cover", borderRadius: "6px" }} />
+                            </td>
+                            <td>
+                              <div className={styles.actionsCell}>
+                                <button className={styles.editBtn} onClick={() => handleVideoEdit(v)}>Edit</button>
+                                <button className={styles.deleteBtn} onClick={() => handleVideoDelete(v.id)}>Delete</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )
+                )}
+
+                {/* 3. REVIEWS TAB TABLE */}
+                {activeTab === "reviews" && (
+                  reviewsList.length === 0 ? (
+                    <div className={styles.emptyState}>No reviews added yet.</div>
+                  ) : (
+                    <table className={styles.projectTable}>
+                      <thead>
+                        <tr>
+                          <th>Donor Name & Loc</th>
+                          <th>Stars</th>
+                          <th>Quote / Message</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reviewsList.map((r) => (
+                          <tr key={r.id} className={styles.projectRow}>
+                            <td>
+                              <div className={styles.projectTitleCell}>{r.name}</div>
+                              <div style={{ fontSize: "12px" }}>{r.loc}</div>
+                            </td>
+                            <td style={{ color: "var(--gold)" }}>{r.stars}</td>
+                            <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {r.quote}
+                            </td>
+                            <td>
+                              <div className={styles.actionsCell}>
+                                <button className={styles.editBtn} onClick={() => handleReviewEdit(r)}>Edit</button>
+                                <button className={styles.deleteBtn} onClick={() => handleReviewDelete(r.id)}>Delete</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )
+                )}
+              </>
             )}
           </div>
         </div>
 
-        {/* Right column: Add / Edit Project Form */}
-        <div id="project-form">
+        {/* Right Column: Add/Edit Form depending on active tab */}
+        <div id="entry-form">
           <div className={styles.formCard}>
-            <h2 className={styles.cardTitle}>
-              {isEditing ? "📝 Edit Project Details" : "➕ Add Humanitarian Project"}
-            </h2>
-            <form onSubmit={handleSubmit}>
-              <div className={styles.formGrid}>
-                <div className={styles.formFullWidth}>
-                  <div className={styles.inputGroup}>
-                    <label className={styles.label}>Project Title *</label>
-                    <input
-                      className={styles.input}
-                      type="text"
-                      placeholder="e.g., Solar Tube Well — Thar Desert"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label className={styles.label}>Category *</label>
-                  <select
-                    className={styles.select}
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as ProjectCategory)}
-                  >
-                    <option value="Housing">Housing</option>
-                    <option value="Clean Water">Clean Water</option>
-                    <option value="Disaster Relief">Disaster Relief</option>
-                    <option value="Education">Education</option>
-                    <option value="Food Aid">Food Aid</option>
-                  </select>
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label className={styles.label}>Location *</label>
-                  <input
-                    className={styles.input}
-                    type="text"
-                    placeholder="e.g., Tharparkar, Sindh"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label className={styles.label}>Date *</label>
-                  <input
-                    className={styles.input}
-                    type="text"
-                    placeholder="e.g., May 2023"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label className={styles.label}>Beneficiaries count</label>
-                  <input
-                    className={styles.input}
-                    type="number"
-                    value={beneficiaries}
-                    onChange={(e) => setBeneficiaries(Number(e.target.value))}
-                  />
-                </div>
-
-                <div className={styles.formFullWidth}>
-                  <div className={styles.inputGroup}>
-                    <label className={styles.label}>Project Image URL</label>
-                    <input
-                      className={styles.input}
-                      type="text"
-                      placeholder="e.g., https://picsum.photos/400/260?random=105"
-                      value={img}
-                      onChange={(e) => setImg(e.target.value)}
-                    />
-                    
-                    <div style={{ margin: "16px 0", fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
-                      <span>OR UPLOAD IMAGE FILE</span>
-                      <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
-                    </div>
-
-                    <label className={styles.label}>Upload Image File (Max 2MB)</label>
-                    <input
-                      className={styles.input}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageFileChange}
-                    />
-                    {uploadingImg && (
-                      <span style={{ fontSize: "12px", color: "var(--gold)", fontWeight: 600, marginTop: "4px", display: "block" }}>
-                        Uploading to Firebase Storage... ⏳
-                      </span>
-                    )}
-                    {uploadError && (
-                      <span style={{ fontSize: "12px", color: "#ef4444", fontWeight: 500, marginTop: "4px", display: "block" }}>
-                        ❌ {uploadError}
-                      </span>
-                    )}
-                    {img && (
-                      <div style={{ marginTop: "14px" }}>
-                        <span style={{ fontSize: "12px", color: "var(--green-mid)", display: "block", marginBottom: "4px" }}>
-                          ✓ Image Preview:
-                        </span>
-                        <img 
-                          src={img} 
-                          alt="Uploaded Preview" 
-                          style={{ width: "100%", maxHeight: "120px", objectFit: "cover", borderRadius: "8px", border: "1px solid var(--card-border)" }} 
-                        />
+            {/* 1. PROJECTS TAB FORM */}
+            {activeTab === "projects" && (
+              <>
+                <h2 className={styles.cardTitle}>
+                  {isEditing ? "📝 Edit Project Details" : "➕ Add Humanitarian Project"}
+                </h2>
+                <form onSubmit={handleProjectSubmit}>
+                  <div className={styles.formGrid}>
+                    <div className={styles.formFullWidth}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Project Title *</label>
+                        <input className={styles.input} type="text" placeholder="e.g. Solar Tube Well" value={projTitle} onChange={(e) => setProjTitle(e.target.value)} required />
                       </div>
-                    )}
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Category *</label>
+                      <select className={styles.select} value={projCategory} onChange={(e) => setProjCategory(e.target.value as ProjectCategory)}>
+                        <option value="Housing">Housing</option>
+                        <option value="Clean Water">Clean Water</option>
+                        <option value="Disaster Relief">Disaster Relief</option>
+                        <option value="Education">Education</option>
+                        <option value="Food Aid">Food Aid</option>
+                      </select>
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Location *</label>
+                      <input className={styles.input} type="text" placeholder="e.g. Dadu, Sindh" value={projLocation} onChange={(e) => setProjLocation(e.target.value)} required />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Date *</label>
+                      <input className={styles.input} type="text" placeholder="e.g. Aug 2022" value={projDate} onChange={(e) => setProjDate(e.target.value)} required />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Beneficiaries help count</label>
+                      <input className={styles.input} type="number" value={projBeneficiaries} onChange={(e) => setProjBeneficiaries(Number(e.target.value))} />
+                    </div>
+                    <div className={styles.formFullWidth}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Project Image URL</label>
+                        <input className={styles.input} type="text" placeholder="e.g. https://..." value={projImg} onChange={(e) => setProjImg(e.target.value)} />
+                        
+                        <div style={{ margin: "16px 0", fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "8px" }}>
+                          <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
+                          <span>OR UPLOAD IMAGE FILE</span>
+                          <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
+                        </div>
+                        
+                        <label className={styles.label}>Upload Image File (Max 2MB)</label>
+                        <input className={styles.input} type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setProjImg)} />
+                        {uploadingImg && <span style={{ fontSize: "12px", color: "var(--gold)" }}>Uploading... ⏳</span>}
+                        {uploadError && <span style={{ fontSize: "12px", color: "#ef4444" }}>❌ {uploadError}</span>}
+                        {projImg && <img src={projImg} alt="Preview" style={{ width: "100%", maxHeight: "100px", objectFit: "cover", marginTop: "10px", borderRadius: "8px" }} />}
+                      </div>
+                    </div>
+                    <div className={styles.formFullWidth}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Description *</label>
+                        <textarea className={styles.textarea} placeholder="Describe the project..." value={projDesc} onChange={(e) => setProjDesc(e.target.value)} required />
+                      </div>
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Display Order</label>
+                      <input className={styles.input} type="number" value={projOrder} onChange={(e) => setProjOrder(Number(e.target.value))} />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label className={styles.checkboxLabel}>
+                        <input type="checkbox" className={styles.checkbox} checked={projFeatured} onChange={(e) => setProjFeatured(e.target.checked)} />
+                        Featured / Show First
+                      </label>
+                    </div>
                   </div>
-                </div>
-
-                <div className={styles.formFullWidth}>
-                  <div className={styles.inputGroup}>
-                    <label className={styles.label}>Description *</label>
-                    <textarea
-                      className={styles.textarea}
-                      placeholder="Describe the direct action, impact metrics, and community transformation..."
-                      value={desc}
-                      onChange={(e) => setDesc(e.target.value)}
-                      required
-                    />
+                  <div className={styles.buttonGroup}>
+                    <button type="submit" className="btn btn-green" style={{ flex: 1 }} disabled={uploadingImg}>
+                      {isEditing ? "Save Changes" : "Create Project"}
+                    </button>
+                    {isEditing && <button type="button" className="btn btn-outline" onClick={resetAllForms}>Cancel</button>}
                   </div>
-                </div>
+                </form>
+              </>
+            )}
 
-                <div className={styles.inputGroup}>
-                  <label className={styles.label}>Display Order / Position</label>
-                  <input
-                    className={styles.input}
-                    type="number"
-                    value={order}
-                    onChange={(e) => setOrder(Number(e.target.value))}
-                  />
-                </div>
+            {/* 2. VIDEOS TAB FORM */}
+            {activeTab === "videos" && (
+              <>
+                <h2 className={styles.cardTitle}>
+                  {isEditing ? "📝 Edit Video Story" : "🎬 Add Video Story"}
+                </h2>
+                <form onSubmit={handleVideoSubmit}>
+                  <div className={styles.formGrid}>
+                    <div className={styles.formFullWidth}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Video Title *</label>
+                        <input className={styles.input} type="text" placeholder="e.g. Clean Water for Tharparkar" value={vidTitle} onChange={(e) => setVidTitle(e.target.value)} required />
+                      </div>
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>YouTube Video Link *</label>
+                      <input className={styles.input} type="text" placeholder="e.g. https://www.youtube.com/watch?v=..." value={vidUrl} onChange={(e) => setVidUrl(e.target.value)} required />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Duration</label>
+                      <input className={styles.input} type="text" placeholder="e.g. 4:32" value={vidDuration} onChange={(e) => setVidDuration(e.target.value)} />
+                    </div>
+                    <div className={styles.formFullWidth}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Thumbnail Image URL</label>
+                        <input className={styles.input} type="text" placeholder="e.g. https://..." value={vidImg} onChange={(e) => setVidImg(e.target.value)} />
+                        
+                        <div style={{ margin: "16px 0", fontSize: "11px", fontWeight: 700, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "8px" }}>
+                          <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
+                          <span>OR UPLOAD THUMBNAIL FILE</span>
+                          <hr style={{ flex: 1, border: "none", borderTop: "1px dashed var(--card-border)" }} />
+                        </div>
+                        
+                        <label className={styles.label}>Upload Thumbnail File (Max 2MB)</label>
+                        <input className={styles.input} type="file" accept="image/*" onChange={(e) => handleImageFileChange(e, setVidImg)} />
+                        {uploadingImg && <span style={{ fontSize: "12px", color: "var(--gold)" }}>Uploading... ⏳</span>}
+                        {uploadError && <span style={{ fontSize: "12px", color: "#ef4444" }}>❌ {uploadError}</span>}
+                        {vidImg && <img src={vidImg} alt="Preview" style={{ width: "100%", maxHeight: "100px", objectFit: "cover", marginTop: "10px", borderRadius: "8px" }} />}
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.buttonGroup}>
+                    <button type="submit" className="btn btn-green" style={{ flex: 1 }} disabled={uploadingImg}>
+                      {isEditing ? "Save Video Details" : "Publish Video Story"}
+                    </button>
+                    {isEditing && <button type="button" className="btn btn-outline" onClick={resetAllForms}>Cancel</button>}
+                  </div>
+                </form>
+              </>
+            )}
 
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <label className={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      className={styles.checkbox}
-                      checked={featured}
-                      onChange={(e) => setFeatured(e.target.checked)}
-                    />
-                    Featured / Show First
-                  </label>
-                </div>
-              </div>
-
-              <div className={styles.buttonGroup}>
-                <button 
-                  type="submit" 
-                  className="btn btn-green" 
-                  style={{ flex: 1 }}
-                  disabled={uploadingImg}
-                >
-                  {isEditing ? "Save Changes" : "Create Project"}
-                </button>
-                {isEditing && (
-                  <button type="button" className="btn btn-outline" onClick={resetForm}>
-                    Cancel
-                  </button>
-                )}
-              </div>
-            </form>
+            {/* 3. REVIEWS TAB FORM */}
+            {activeTab === "reviews" && (
+              <>
+                <h2 className={styles.cardTitle}>
+                  {isEditing ? "📝 Edit Review Details" : "⭐ Add Donor Testimonial"}
+                </h2>
+                <form onSubmit={handleReviewSubmit}>
+                  <div className={styles.formGrid}>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Donor Name *</label>
+                      <input className={styles.input} type="text" placeholder="e.g. Ahmed Khan" value={revName} onChange={(e) => setRevName(e.target.value)} required />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Stars *</label>
+                      <select className={styles.select} value={revStars} onChange={(e) => setRevStars(e.target.value)}>
+                        <option value="★★★★★">★★★★★ (5 Stars)</option>
+                        <option value="★★★★☆">★★★★☆ (4 Stars)</option>
+                        <option value="★★★☆☆">★★★☆☆ (3 Stars)</option>
+                        <option value="★★☆☆☆">★★☆☆☆ (2 Stars)</option>
+                        <option value="★☆☆☆☆">★☆☆☆☆ (1 Star)</option>
+                      </select>
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Avatar Initials</label>
+                      <input className={styles.input} type="text" placeholder="e.g. AK (Defaults to name initials)" value={revAvatar} onChange={(e) => setRevAvatar(e.target.value)} />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label className={styles.label}>Location / Date Details *</label>
+                      <input className={styles.input} type="text" placeholder="e.g. Donor since 2022 · Lahore" value={revLoc} onChange={(e) => setRevLoc(e.target.value)} required />
+                    </div>
+                    <div className={styles.formFullWidth}>
+                      <div className={styles.inputGroup}>
+                        <label className={styles.label}>Review Quote / Message *</label>
+                        <textarea className={styles.textarea} placeholder="Write the donor's description here..." value={revQuote} onChange={(e) => setRevQuote(e.target.value)} required />
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.buttonGroup}>
+                    <button type="submit" className="btn btn-green" style={{ flex: 1 }}>
+                      {isEditing ? "Save Review Details" : "Publish Testimonial"}
+                    </button>
+                    {isEditing && <button type="button" className="btn btn-outline" onClick={resetAllForms}>Cancel</button>}
+                  </div>
+                </form>
+              </>
+            )}
           </div>
         </div>
       </div>

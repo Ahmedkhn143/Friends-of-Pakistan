@@ -4,81 +4,23 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ScrollReveal from "./ScrollReveal";
 import styles from "./VideoGallery.module.css";
-
-interface VideoItem {
-  id: number;
-  title: string;
-  duration: string;
-  img: string;
-  videoUrl: string;
-}
-
-// 8 High-Quality Realistic Video Documentaries
-const videos: VideoItem[] = [
-  {
-    id: 1,
-    title: "Flood Relief Operations — Sindh 2022",
-    duration: "4:32",
-    img: "https://images.unsplash.com/photo-1469504512102-900f29606341?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  },
-  {
-    id: 2,
-    title: "Building Homes in Swat Valley",
-    duration: "6:15",
-    img: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  },
-  {
-    id: 3,
-    title: "Clean Water for Tharparkar",
-    duration: "3:48",
-    img: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  },
-  {
-    id: 4,
-    title: "Rebuilding Lives: Post-Flood Housing",
-    duration: "5:20",
-    img: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  },
-  {
-    id: 5,
-    title: "Medical Camps in Remote Balochistan",
-    duration: "4:10",
-    img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  },
-  {
-    id: 6,
-    title: "Ramadan Food Distribution Nationwide",
-    duration: "3:05",
-    img: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  },
-  {
-    id: 7,
-    title: "Girls Education in Southern Punjab",
-    duration: "7:02",
-    img: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  },
-  {
-    id: 8,
-    title: "Emergency Response: Cyclone Relief",
-    duration: "3:55",
-    img: "https://images.unsplash.com/photo-1504159506876-f8338247a14a?w=800&q=80",
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-  }
-];
+import { getVideos, fetchVideosFromFirebase, VideoItem } from "@/utils/projectDb";
 
 export default function VideoGallery() {
+  const [videoList, setVideoList] = useState<VideoItem[]>([]);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    // Load cached/default immediately
+    setVideoList(getVideos());
+    // Fetch fresh list from Firebase
+    fetchVideosFromFirebase().then((freshVideos) => {
+      if (freshVideos && freshVideos.length > 0) {
+        setVideoList(freshVideos);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -93,8 +35,8 @@ export default function VideoGallery() {
   }, [activeVideoUrl]);
 
   // Split videos into two separate lists for the dual rows
-  const row1Videos = videos.filter((_, idx) => idx % 2 === 0);
-  const row2Videos = videos.filter((_, idx) => idx % 2 !== 0);
+  const row1Videos = videoList.filter((_, idx) => idx % 2 === 0);
+  const row2Videos = videoList.filter((_, idx) => idx % 2 !== 0);
 
   // Duplicate arrays to allow seamless marquee loop
   const row1List = [...row1Videos, ...row1Videos];

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Project, ProjectCategory } from "@/data/projects";
-import { getProjects } from "@/utils/projectDb";
+import { getProjects, fetchProjectsFromFirebase } from "@/utils/projectDb";
 import ProjectCard from "./ProjectCard";
 import styles from "./AdvancedFilter.module.css";
 
@@ -13,15 +13,25 @@ export default function ProjectFilter() {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    const data = getProjects();
-    // Sort projects: Featured first, then order
-    const sorted = [...data].sort((a, b) => {
-      const aFeatured = (a as any).featured ? 1 : 0;
-      const bFeatured = (b as any).featured ? 1 : 0;
-      if (aFeatured !== bFeatured) return bFeatured - aFeatured;
-      return ((a as any).order ?? 0) - ((b as any).order ?? 0);
+    const loadProjects = (dataList: Project[]) => {
+      const sorted = [...dataList].sort((a, b) => {
+        const aFeatured = (a as any).featured ? 1 : 0;
+        const bFeatured = (b as any).featured ? 1 : 0;
+        if (aFeatured !== bFeatured) return bFeatured - aFeatured;
+        return ((a as any).order ?? 0) - ((b as any).order ?? 0);
+      });
+      setAllProjects(sorted);
+    };
+
+    // Load local cached first
+    loadProjects(getProjects());
+
+    // Fetch fresh database items
+    fetchProjectsFromFirebase().then((fresh) => {
+      if (fresh && fresh.length > 0) {
+        loadProjects(fresh);
+      }
     });
-    setAllProjects(sorted);
 
     // Read search parameter from URL
     if (typeof window !== "undefined") {
