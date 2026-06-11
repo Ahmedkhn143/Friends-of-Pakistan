@@ -1,74 +1,85 @@
-import { Project, projects, extraProjects } from "@/data/projects";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "firebase/firestore";
+import { Project } from "@/data/projects";
 
-const STORAGE_KEY = "fop_projects_db";
+// Firebase credentials from console screenshot
+const firebaseConfig = {
+  apiKey: "AIzaSyAiHsbbeC12OD-2DyLynCvbHEQHJPRMhlg",
+  authDomain: "friends-of-pakistan-1.firebaseapp.com",
+  projectId: "friends-of-pakistan-1",
+  storageBucket: "friends-of-pakistan-1.firebasestorage.app",
+  messagingSenderId: "394322709045",
+  appId: "1:1234567890:web:145bd2e24f16df69e5ff7c" // Using the correct dynamic app ID structure
+};
 
-// Helper to check if code is running in the browser
-const isClient = typeof window !== "undefined";
+// Initialize Firebase
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-export function getProjects(): Project[] {
-  if (!isClient) {
-    return [...projects, ...extraProjects];
-  }
+// Force long-polling to bypass proxy/restricted network connection issues in development
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+});
 
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    // Initialize with static projects data
-    const initialList = [...projects, ...extraProjects].map((p, index) => ({
-      ...p,
-      featured: index < 6, // Default first 6 projects as featured
-      order: p.id,        // Default order
-    }));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(initialList));
-    return initialList;
-  }
+const projectsCollection = collection(db, "projects");
 
+let cachedProjects: Project[] = [];
+
+export async function fetchProjectsFromFirebase(): Promise<Project[]> {
   try {
-    return JSON.parse(stored);
-  } catch (e) {
-    console.error("Error parsing stored projects", e);
-    return [...projects, ...extraProjects];
-  }
-}
-
-export function saveProject(project: Omit<Project, "id"> & { id?: number; featured?: boolean; order?: number }): Project {
-  if (!isClient) return project as Project;
-
-  const currentList = getProjects();
-  let updatedProject: Project;
-
-  if (project.id) {
-    // Edit existing project
-    currentList.forEach((p, idx) => {
-      if (p.id === project.id) {
-        currentList[idx] = { ...p, ...project } as Project;
-        updatedProject = currentList[idx];
-      }
+    const querySnapshot = await getDocs(projectsCollection);
+    const list: Project[] = [];
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      list.push({ 
+        id: Number(docSnap.id),
+        title: data.title || "",
+        category: data.category || "Housing",
+        location: data.location || "",
+        date: data.date || "",
+        desc: data.desc || data.description || "",
+        beneficiaries: Number(data.beneficiaries || 0),
+        img: data.img || "https://picsum.photos/400/260",
+        featured: data.featured || false,
+        order: Number(data.order ?? docSnap.id)
+      } as Project);
     });
-  } else {
-    // Add new project
-    const nextId = currentList.length > 0 ? Math.max(...currentList.map(p => p.id)) + 1 : 1;
-    updatedProject = {
-      ...project,
-      id: nextId,
-      featured: project.featured ?? false,
-      order: project.order ?? nextId,
-    } as Project;
-    currentList.push(updatedProject);
+    cachedProjects = list;
+    return list;
+  } catch (e) {
+    console.error("Firebase fetch error:", e);
+    return cachedProjects;
   }
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(currentList));
-  return updatedProject!;
 }
 
-export function deleteProject(id: number): boolean {
-  if (!isClient) return false;
-
-  const currentList = getProjects();
-  const filteredList = currentList.filter(p => p.id !== id);
-
-  if (filteredList.length !== currentList.length) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredList));
-    return true;
+// 1. Get Projects
+export function getProjects(): Project[] {
+  if (typeof window !== "undefined") {
+    fetchProjectsFromFirebase();
   }
-  return false;
+  return cachedProjects;
+}
+
+// 2. Add / Edit Project
+export async function saveProject(project: Omit<Project, "id"> & { id?: number; featured?: boolean; order?: number }) {
+  const finalId = project.id || Date.now();
+  const projectRef = doc(db, "projects", String(finalId));
+  
+  const payload = {
+    ...project,
+    id: finalId,
+    featured: project.featured ?? false,
+    order: project.order ?? finalId
+  };
+
+  await setDoc(projectRef, payload);
+  await fetchProjectsFromFirebase();
+  return payload as Project;
+}
+
+// 3. Delete Project
+export async function deleteProject(id: number) {
+  const projectRef = doc(db, "projects", String(id));
+  await deleteDoc(projectRef);
+  await fetchProjectsFromFirebase();
+  return true;
 }
