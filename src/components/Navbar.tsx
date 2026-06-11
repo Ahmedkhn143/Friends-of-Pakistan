@@ -24,16 +24,19 @@ export default function Navbar() {
     <>
       <nav id="navbar" className={scrolled ? "scrolled" : ""}>
         <div className="nav-inner" style={{ width: "100%" }}>
-          <Link href="/" className="nav-logo" onClick={closeMenu}>
-            <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="18" cy="18" r="17" stroke="#fbbf24" strokeWidth="1.5" />
-              <path d="M18 8c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10S23.523 8 18 8zm0 18a8 8 0 110-16 8 8 0 010 16z" fill="#10b981" opacity=".3" />
-              <path d="M22 16a4 4 0 11-5.657 5.657A4 4 0 0122 16z" fill="#fbbf24" />
-              <path d="M14 14l1.5 3.5M14 14l3.5 1.5" stroke="#064e3b" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-            <div className="nav-logo-text">
-              Friends of Pakistan<span>Serving humanity</span>
-            </div>
+          <Link href="/" className="nav-logo" onClick={closeMenu} aria-label="Friends of Pakistan">
+            <img 
+              src="/logo.jpg" 
+              alt="Friends of Pakistan Logo" 
+              style={{ 
+                height: "45px", 
+                width: "auto", 
+                borderRadius: "6px",
+                display: "block",
+                filter: "invert(1)",
+                mixBlendMode: "multiply"
+              }} 
+            />
           </Link>
 
           <div className="nav-links">
