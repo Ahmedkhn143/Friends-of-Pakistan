@@ -6,9 +6,10 @@ interface ScrollRevealProps {
   children: React.ReactNode;
   delay?: number; // 0, 1, 2, 3, 4 (maps to .reveal-delay-X)
   className?: string;
+  style?: React.CSSProperties;
 }
 
-export default function ScrollReveal({ children, delay = 0, className = "" }: ScrollRevealProps) {
+export default function ScrollReveal({ children, delay = 0, className = "", style }: ScrollRevealProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -36,7 +37,7 @@ export default function ScrollReveal({ children, delay = 0, className = "" }: Sc
   const combinedClasses = `reveal ${isVisible ? "visible" : ""} ${delayClass} ${className}`.trim();
 
   return (
-    <div ref={ref} className={combinedClasses}>
+    <div ref={ref} className={combinedClasses} style={style}>
       {children}
     </div>
   );
