@@ -1745,6 +1745,14 @@ button {
   transition: all .2s;
 }
 
+.social-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.social-btn:hover svg {
+  transform: scale(1.18);
+}
+
 .social-btn:hover {
   background: var(--gold);
   border-color: var(--gold);
@@ -1785,6 +1793,19 @@ button {
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.cta-section .btn-outline {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--white);
+  border-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.cta-section .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--white);
+  color: var(--white);
 }
 
 /* ── ABOUT ── */
