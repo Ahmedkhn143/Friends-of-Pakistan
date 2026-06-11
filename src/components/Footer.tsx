@@ -27,6 +27,7 @@ export default function Footer() {
               <li><Link href="/impact">Our Impact</Link></li>
               <li><Link href="/media">Media</Link></li>
               <li><Link href="/contact">Contact</Link></li>
+              <li><Link href="/dashboard" style={{ color: "var(--gold-light)" }}>Admin Dashboard</Link></li>
             </ul>
           </div>
 

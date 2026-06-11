@@ -9,9 +9,9 @@ import MissionCard from "@/components/MissionCard";
 import CauseCard from "@/components/CauseCard";
 import ProjectCard from "@/components/ProjectCard";
 import TestimonialCard from "@/components/TestimonialCard";
-// import ImpactCalculator from "@/components/ImpactCalculator";
 import { Project } from "@/data/projects";
 import { getProjects } from "@/utils/projectDb";
+import ImpactCalculator from "@/components/ImpactCalculator";
 
 export default function Home() {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
@@ -57,7 +57,7 @@ export default function Home() {
 
         <div className="container">
           {/* Left: Headline and Copy */}
-          <div className="hero-content" style={{ maxWidth: "800px" }}>
+          <div className="hero-content">
             <div className="hero-badge">🇵🇰 Serving Pakistan since 2021</div>
             <h1 className="hero-title">
               Bringing <strong>Hope</strong> Home,<br />One Family<br />at a Time
@@ -80,11 +80,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right: Live Impact Calculator (Source code remains in components/ImpactCalculator.tsx)
+          {/* Right: Live Impact Calculator */}
           <ScrollReveal className="hero-calculator-wrap" delay={1}>
             <ImpactCalculator />
           </ScrollReveal>
-          */}
         </div>
 
         <div className="hero-scroll">
