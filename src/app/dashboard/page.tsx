@@ -190,19 +190,33 @@ export default function Dashboard() {
 
     // Convert standard youtube link to embed url if needed
     let finalUrl = vidUrl;
+    let ytId = "";
     if (vidUrl.includes("watch?v=")) {
       const vid = vidUrl.split("v=")[1]?.split("&")[0];
-      if (vid) finalUrl = `https://www.youtube.com/embed/${vid}`;
+      if (vid) {
+        finalUrl = `https://www.youtube.com/embed/${vid}`;
+        ytId = vid;
+      }
     } else if (vidUrl.includes("youtu.be/")) {
       const vid = vidUrl.split("youtu.be/")[1]?.split("?")[0];
-      if (vid) finalUrl = `https://www.youtube.com/embed/${vid}`;
+      if (vid) {
+        finalUrl = `https://www.youtube.com/embed/${vid}`;
+        ytId = vid;
+      }
+    } else if (vidUrl.includes("embed/")) {
+      const vid = vidUrl.split("embed/")[1]?.split("?")[0];
+      if (vid) {
+        ytId = vid;
+      }
     }
+
+    const resolvedThumbnail = vidImg || (ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : "https://images.unsplash.com/photo-1469504512102-900f29606341?w=800&q=80");
 
     const payload = {
       id: vidId,
       title: vidTitle,
       duration: vidDuration || "5:00",
-      img: vidImg || "https://images.unsplash.com/photo-1469504512102-900f29606341?w=800&q=80",
+      img: resolvedThumbnail,
       videoUrl: finalUrl
     };
 

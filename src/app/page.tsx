@@ -16,6 +16,16 @@ import ImpactCalculator from "@/components/ImpactCalculator";
 export default function Home() {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [reviewsList, setReviewsList] = useState<ReviewItem[]>([]);
+  const [sliderIndex, setSliderIndex] = useState(0);
+
+  useEffect(() => {
+    if (reviewsList.length > 3) {
+      const interval = setInterval(() => {
+        setSliderIndex((prev) => (prev + 1) % reviewsList.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [reviewsList.length]);
 
   useEffect(() => {
     // 1. Handle projects dynamic load
@@ -256,34 +266,74 @@ export default function Home() {
             tag="Voices of change" 
             title="What Our Donors Say" 
           />
-          <div className="testi-grid">
-            {reviewsList.map((rev, i) => (
-              <TestimonialCard 
-                key={rev.id}
-                stars={rev.stars}
-                quote={rev.quote}
-                avatar={rev.avatar}
-                name={rev.name}
-                loc={rev.loc}
-                delay={i % 3}
-              />
-            ))}
-          </div>
+          {reviewsList.length > 3 ? (
+            <div className="testi-slider-wrap">
+              <div 
+                className="testi-slider-track"
+                style={{
+                  transform: `translateX(-${sliderIndex * (100 / reviewsList.length)}%)`,
+                  display: "flex",
+                  transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+                  width: `${reviewsList.length * 100}%`
+                }}
+              >
+                {reviewsList.map((rev) => (
+                  <div 
+                    key={rev.id} 
+                    className="testi-slide"
+                    style={{ width: `${100 / reviewsList.length}%`, flexShrink: 0 }}
+                  >
+                    <div style={{ maxWidth: "850px", margin: "0 auto", padding: "0 24px" }}>
+                      <div className="testi-slide-content">
+                        <div className="testi-slider-stars">{rev.stars}</div>
+                        <p className="testi-slider-quote">"{rev.quote}"</p>
+                        <div className="testi-slider-author">
+                          <div className="testi-slider-avatar">
+                            {rev.avatar ? rev.avatar.substring(0, 2).toUpperCase() : rev.name.substring(0, 2).toUpperCase()}
+                          </div>
+                          <div className="testi-slider-meta">
+                            <div className="testi-slider-name">{rev.name}</div>
+                            <div className="testi-slider-loc">{rev.loc}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Controls */}
+              <div className="testi-slider-controls">
+                <div className="testi-slider-dots">
+                  {reviewsList.map((_, idx) => (
+                    <button
+                      key={idx}
+                      className={`testi-slider-dot ${sliderIndex === idx ? "active" : ""}`}
+                      onClick={() => setSliderIndex(idx)}
+                      aria-label={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="testi-grid">
+              {reviewsList.map((rev, i) => (
+                <TestimonialCard 
+                  key={rev.id}
+                  stars={rev.stars}
+                  quote={rev.quote}
+                  avatar={rev.avatar}
+                  name={rev.name}
+                  loc={rev.loc}
+                  delay={i % 3}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      <section className="section-sm partners-bg">
-        <div className="container">
-          <SectionHeading tag="Trusted by" title="Our Partners & Supporters" align="center" />
-          <div className="partners-logos">
-            <div className="partner-logo">Al-Khair Foundation</div>
-            <div className="partner-logo">Pakistan Relief Trust</div>
-            <div className="partner-logo">Edhi Foundation</div>
-            <div className="partner-logo">JDC Welfare</div>
-            <div className="partner-logo">Humanity First</div>
-          </div>
-        </div>
-      </section>
 
       <div className="cta-section">
         <div className="container">
