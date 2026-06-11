@@ -4,11 +4,29 @@
   padding: 0 24px;
 }
 
+@media (max-width: 768px) {
+  .dashboardContainer {
+    margin: 100px auto 40px;
+    padding: 0 16px;
+  }
+}
+
 .titleArea {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .titleArea {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .dashboardHeading {
+    font-size: 26px;
+  }
 }
 
 .dashboardHeading {
@@ -60,6 +78,10 @@
   gap: 32px;
 }
 
+.mainLayout > div {
+  min-width: 0;
+}
+
 @media (min-width: 992px) {
   .mainLayout {
     grid-template-columns: 3fr 2fr;
@@ -86,6 +108,7 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  min-width: 600px;
 }
 
 .projectTable th {
@@ -184,6 +207,12 @@
   padding: 32px;
   box-shadow: var(--shadow);
   height: fit-content;
+}
+
+@media (max-width: 576px) {
+  .formCard {
+    padding: 20px;
+  }
 }
 
 .formGrid {
