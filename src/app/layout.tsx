@@ -6,6 +6,11 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Friends of Pakistan — Serving Humanity Since 2021",
   description: "Friends of Pakistan is a humanitarian foundation serving Pakistan through housing, clean water, and disaster relief since 2021. 1000+ projects completed.",
+  icons: {
+    icon: "/logo_dark.png",
+    shortcut: "/logo_dark.png",
+    apple: "/logo_dark.png",
+  },
 };
 
 export default function RootLayout({
