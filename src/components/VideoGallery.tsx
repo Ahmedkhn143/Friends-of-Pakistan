@@ -47,7 +47,7 @@ export default function VideoGallery() {
       <div className={styles.sliderContainer}>
         {/* Row 1 - scrolling left */}
         <div className={styles.row}>
-          <div className={styles.trackLeft}>
+          <div className={`${styles.track} ${styles.trackLeft}`}>
             {row1List.map((video, idx) => (
               <div 
                 key={`row1-${video.id}-${idx}`} 
@@ -71,7 +71,7 @@ export default function VideoGallery() {
 
         {/* Row 2 - scrolling right */}
         <div className={styles.row}>
-          <div className={styles.trackRight}>
+          <div className={`${styles.track} ${styles.trackRight}`}>
             {row2List.map((video, idx) => (
               <div 
                 key={`row2-${video.id}-${idx}`} 

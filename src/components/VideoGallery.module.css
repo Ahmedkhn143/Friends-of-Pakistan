@@ -26,12 +26,10 @@
 }
 
 .trackLeft {
-  composes: track;
   animation: scrollLeft 35s linear infinite;
 }
 
 .trackRight {
-  composes: track;
   animation: scrollRight 35s linear infinite;
 }
 

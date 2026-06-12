@@ -1991,6 +1991,7 @@ button {
   padding: 1.5px;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(217, 119, 6, 0.25));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
