@@ -11,7 +11,118 @@ import ProjectCard from "@/components/ProjectCard";
 import TestimonialCard from "@/components/TestimonialCard";
 import { Project } from "@/data/projects";
 import { getProjects, fetchProjectsFromFirebase, getReviews, fetchReviewsFromFirebase, ReviewItem } from "@/utils/projectDb";
-import ImpactCalculator from "@/components/ImpactCalculator";
+
+function HeroCauseCard() {
+  const [activeCause, setActiveCause] = useState("housing");
+
+  return (
+    <div className="new-hero-card" aria-label="Choose a cause">
+      <div className="new-cause-card">
+        <p className="new-cause-card-title">Choose a cause</p>
+
+        <div 
+          className={`new-cause-item ${activeCause === "housing" ? "active" : ""}`}
+          onClick={() => setActiveCause("housing")}
+          role="button"
+          tabIndex={0}
+          aria-pressed={activeCause === "housing"}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setActiveCause("housing");
+            }
+          }}
+        >
+          <div className="new-cause-icon housing" aria-hidden="true">🏠</div>
+          <div className="new-cause-info">
+            <div className="new-cause-name">Safe Housing</div>
+            <div className="new-cause-sub">430+ homes built</div>
+          </div>
+          <span className="new-cause-arrow" aria-hidden="true">&#8250;</span>
+        </div>
+
+        <div 
+          className={`new-cause-item ${activeCause === "water" ? "active" : ""}`}
+          onClick={() => setActiveCause("water")}
+          role="button"
+          tabIndex={0}
+          aria-pressed={activeCause === "water"}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setActiveCause("water");
+            }
+          }}
+        >
+          <div className="new-cause-icon water" aria-hidden="true">💧</div>
+          <div className="new-cause-info">
+            <div className="new-cause-name">Clean Water</div>
+            <div className="new-cause-sub">200+ wells installed</div>
+          </div>
+          <span className="new-cause-arrow" aria-hidden="true">&#8250;</span>
+        </div>
+
+        <div 
+          className={`new-cause-item ${activeCause === "relief" ? "active" : ""}`}
+          onClick={() => setActiveCause("relief")}
+          role="button"
+          tabIndex={0}
+          aria-pressed={activeCause === "relief"}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setActiveCause("relief");
+            }
+          }}
+        >
+          <div className="new-cause-icon relief" aria-hidden="true">📦</div>
+          <div className="new-cause-info">
+            <div className="new-cause-name">Disaster Relief</div>
+            <div className="new-cause-sub">380+ operations</div>
+          </div>
+          <span className="new-cause-arrow" aria-hidden="true">&#8250;</span>
+        </div>
+
+        <button 
+          className="new-cause-donate-btn"
+          onClick={() => alert("Thank you for your generosity!\nRedirecting to the donation page...")}
+        >
+          Start Donation &rarr;
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function TickerSection() {
+  const [isPaused, setIsPaused] = useState(false);
+
+  return (
+    <div className="new-ticker" role="marquee" aria-label="Impact highlights" aria-live="off">
+      <div 
+        className={`new-ticker-inner ${isPaused ? "paused" : ""}`}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {/* Original set */}
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">430+ Homes Built in Pakistan</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">200+ Clean Water Wells Installed</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">380+ Disaster Relief Operations</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">33+ Districts Served Across Pakistan</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">100% Donation Efficiency — Admin costs raised separately</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">48-hour Emergency Mobilization</span></span>
+        {/* Duplicate set for seamless loop */}
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">430+ Homes Built in Pakistan</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">200+ Clean Water Wells Installed</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">380+ Disaster Relief Operations</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">33+ Districts Served Across Pakistan</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">100% Donation Efficiency — Admin costs raised separately</span></span>
+        <span className="new-ticker-item"><span className="new-ticker-dot"></span><span className="new-ticker-text">48-hour Emergency Mobilization</span></span>
+      </div>
+    </div>
+  );
+}
+
 
 export default function Home() {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
@@ -57,66 +168,624 @@ export default function Home() {
 
   return (
     <>
-      <section id="hero">
-        {/* Background Atmosphere */}
-        <div className="hero-bg"></div>
-        <div className="hero-pattern"></div>
-        <div className="hero-img"></div>
-        
-        {/* Glowing Orbs for Visual Depth */}
-        <div className="glow-orb glow-green"></div>
-        <div className="glow-orb glow-gold"></div>
-
-        {/* Urdu Calligraphy Decorative Watermarks */}
-        <div 
-          className="urdu-watermark urdu-hope"
-          style={{ fontFamily: "'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif" }}
+      {/* ═══════════════════════════
+           1. ANNOUNCEMENT BAR
+      ════════════════════════════ */}
+      <div 
+        style={{
+          width: "100%",
+          background: "#1a7a4a",
+          color: "#fff",
+          textAlign: "center",
+          padding: "7px 1rem",
+          fontSize: "13px",
+          fontWeight: 500,
+          letterSpacing: "0.1px",
+          position: "relative",
+          zIndex: 101,
+        }}
+        role="banner" 
+        aria-label="Site announcement"
+      >
+        2024 Flood Relief Active&nbsp;&nbsp;|&nbsp;&nbsp;We are on the ground in Sindh &amp; Balochistan&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a 
+          href="#donate" 
+          onClick={(e) => {
+            e.preventDefault();
+            alert("Thank you for your generosity!\nRedirecting to the donation page...");
+          }}
+          style={{
+            color: "#fff",
+            textDecoration: "underline",
+            textUnderlineOffset: "2px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
         >
-          امید
-        </div>
-        <div 
-          className="urdu-watermark urdu-humanity"
-          style={{ fontFamily: "'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif" }}
-        >
-          انسانیت
-        </div>
+          Donate Now &rarr;
+        </a>
+      </div>
 
-        <div className="container">
-          {/* Left: Headline and Copy */}
-          <div className="hero-content">
-            <div className="hero-badge">🇵🇰 Serving Pakistan since 2021</div>
-            <h1 className="hero-title">
-              Bringing <strong>Hope</strong> Home,<br />One Family<br />at a Time
-            </h1>
-            <p className="hero-sub">
-              Together we build more than houses—we restore dignity, secure water resources, and rebuild lives across Pakistan.
-            </p>
-            <div className="hero-causes">
-              <span className="hero-cause">Housing</span>
-              <span className="hero-cause">Clean Water</span>
-              <span className="hero-cause">Disaster Relief</span>
-            </div>
-            <div className="hero-btns">
-              <Link href="/projects" className="btn btn-green">
-                Explore Our Work
-              </Link>
-              <Link href="/about" className="btn btn-outline">
-                Our Story
-              </Link>
-            </div>
+      {/* Custom Styles for New Hero & Ticker & Trust Bar */}
+      <style jsx global>{`
+        /* pulse badge keyframes */
+        @keyframes pulse-ring {
+          0%   { transform: scale(1);   opacity: 1; }
+          100% { transform: scale(1.6); opacity: 0.4; }
+        }
+
+        /* ticker scroll animation */
+        @keyframes ticker-scroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+
+        .new-hero {
+          min-height: 520px;
+          background: linear-gradient(to right, rgba(10, 31, 20, 0.94) 30%, rgba(10, 31, 20, 0.8) 70%, rgba(10, 31, 20, 0.94) 100%), 
+                      url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          padding: 40px 0;
+        }
+
+        .new-hero-stripe {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 5px;
+          height: 100%;
+          background: #1a7a4a;
+          z-index: 1;
+        }
+
+        .new-hero-pattern {
+          position: absolute;
+          inset: 0;
+          background-image: repeating-linear-gradient(
+            45deg,
+            #fff 0,
+            #fff 1px,
+            transparent 1px,
+            transparent 60px
+          );
+          opacity: 0.07;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        .new-hero-orb-1 {
+          position: absolute;
+          top: -100px;
+          right: -50px;
+          width: 400px;
+          height: 400px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(26,122,74,0.35) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .new-hero-orb-2 {
+          position: absolute;
+          bottom: -80px;
+          left: 30%;
+          width: 300px;
+          height: 300px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(26,122,74,0.2) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .new-hero-content {
+          position: relative;
+          z-index: 2;
+          padding: 3.5rem 2.5rem;
+          max-width: 58%;
+        }
+
+        .new-hero-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: rgba(26,122,74,0.25);
+          border: 0.5px solid rgba(26,122,74,0.6);
+          border-radius: 20px;
+          padding: 5px 14px;
+          margin-bottom: 1.25rem;
+        }
+
+        .new-hero-pill-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #4ade80;
+          position: relative;
+          flex-shrink: 0;
+        }
+
+        .new-hero-pill-dot::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: #4ade80;
+          animation: pulse-ring 2s ease-out infinite;
+        }
+
+        .new-hero-pill-text {
+          font-size: 12px;
+          font-weight: 600;
+          color: #7de0a8;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .new-hero-urdu {
+          display: block;
+          direction: rtl;
+          font-size: 28px;
+          color: rgba(255,255,255,0.7);
+          font-weight: 500;
+          margin-bottom: 4px;
+          line-height: 1.3;
+          font-family: inherit;
+        }
+
+        .new-hero-h1 {
+          font-size: 38px;
+          font-weight: 800;
+          color: #fff;
+          line-height: 1.15;
+          letter-spacing: -0.5px;
+          margin-bottom: 1.25rem;
+          font-family: var(--font-playfair), serif;
+        }
+
+        .new-hero-h1 .highlight {
+          color: #4ade80;
+        }
+
+        .new-hero-para {
+          font-size: 15px;
+          color: rgba(255,255,255,0.7);
+          line-height: 1.7;
+          max-width: 500px;
+          margin-bottom: 2rem;
+        }
+
+        .new-hero-cta-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 2.5rem;
+          flex-wrap: wrap;
+        }
+
+        .new-btn-primary {
+          background: #1a7a4a;
+          color: #fff;
+          border: none;
+          border-radius: 7px;
+          padding: 12px 24px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+
+        .new-btn-primary:hover {
+          background: #22a060;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(26,122,74,0.4);
+        }
+
+        .new-btn-outline {
+          background: transparent;
+          color: #fff;
+          border: 1px solid rgba(255,255,255,0.3);
+          border-radius: 7px;
+          padding: 12px 24px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: border-color 0.2s, background 0.2s, transform 0.15s;
+        }
+
+        .new-btn-outline:hover {
+          border-color: rgba(255,255,255,0.6);
+          background: rgba(255,255,255,0.05);
+          transform: translateY(-2px);
+        }
+
+        .new-hero-stats {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+        }
+
+        .new-stat-item {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+
+        .new-stat-number {
+          font-size: 22px;
+          font-weight: 800;
+          color: #fff;
+          line-height: 1;
+        }
+
+        .new-stat-number .new-stat-plus {
+          color: #4ade80;
+        }
+
+        .new-stat-label {
+          font-size: 11px;
+          color: rgba(255,255,255,0.5);
+          text-transform: uppercase;
+          letter-spacing: 0.6px;
+          font-weight: 500;
+        }
+
+        .new-stat-divider {
+          width: 0.5px;
+          height: 40px;
+          background: rgba(255,255,255,0.15);
+          align-self: center;
+          flex-shrink: 0;
+        }
+
+        .new-hero-card {
+          position: absolute;
+          right: 2rem;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 3;
+          width: 240px;
+        }
+
+        .new-cause-card {
+          background: rgba(255,255,255,0.07);
+          border: 0.5px solid rgba(255,255,255,0.15);
+          border-radius: 12px;
+          padding: 1.25rem;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+        }
+
+        .new-cause-card-title {
+          font-size: 11px;
+          color: rgba(255,255,255,0.5);
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          font-weight: 600;
+          margin-bottom: 12px;
+        }
+
+        .new-cause-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 9px 10px;
+          border-radius: 8px;
+          margin-bottom: 6px;
+          cursor: pointer;
+          transition: background 0.2s, border-color 0.2s;
+          border: 0.5px solid transparent;
+        }
+
+        .new-cause-item.active {
+          background: rgba(26,122,74,0.35);
+          border-color: rgba(26,122,74,0.5);
+        }
+
+        .new-cause-item:not(.active):hover {
+          background: rgba(255,255,255,0.06);
+        }
+
+        .new-cause-icon {
+          width: 32px;
+          height: 32px;
+          border-radius: 7px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 15px;
+          flex-shrink: 0;
+        }
+
+        .new-cause-icon.housing { background: rgba(26,122,74,0.4);  }
+        .new-cause-icon.water   { background: rgba(37,99,235,0.3);  }
+        .new-cause-icon.relief  { background: rgba(234,88,12,0.3);  }
+
+        .new-cause-info {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .new-cause-name {
+          font-size: 12px;
+          font-weight: 700;
+          color: #fff;
+          line-height: 1.2;
+          margin-bottom: 2px;
+        }
+
+        .new-cause-sub {
+          font-size: 10px;
+          color: rgba(255,255,255,0.45);
+          line-height: 1;
+        }
+
+        .new-cause-arrow {
+          color: rgba(255,255,255,0.4);
+          font-size: 16px;
+          font-weight: 300;
+          flex-shrink: 0;
+        }
+
+        .new-cause-donate-btn {
+          margin-top: 12px;
+          width: 100%;
+          background: #1a7a4a;
+          color: #fff;
+          border: none;
+          border-radius: 7px;
+          padding: 10px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.15s;
+        }
+
+        .new-cause-donate-btn:hover {
+          background: #22a060;
+          transform: translateY(-1px);
+        }
+
+        /* Ticker */
+        .new-ticker {
+          background: #1a7a4a;
+          padding: 8px 0;
+          overflow: hidden;
+        }
+
+        .new-ticker-inner {
+          display: flex;
+          gap: 2rem;
+          white-space: nowrap;
+          animation: ticker-scroll 18s linear infinite;
+        }
+
+        .new-ticker-inner.paused {
+          animation-play-state: paused;
+        }
+
+        .new-ticker-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+
+        .new-ticker-dot {
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.5);
+          flex-shrink: 0;
+        }
+
+        .new-ticker-text {
+          font-size: 12px;
+          font-weight: 500;
+          color: rgba(255,255,255,0.9);
+        }
+
+        /* Trust Bar */
+        .new-trust-bar {
+          background: #0f1f15;
+          border-top: 0.5px solid rgba(255,255,255,0.08);
+          padding: 14px 2.5rem;
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+          flex-wrap: wrap;
+        }
+
+        .new-trust-label {
+          font-size: 11px;
+          color: rgba(255,255,255,0.35);
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          font-weight: 600;
+          flex-shrink: 0;
+        }
+
+        .new-trust-items {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+        }
+
+        .new-trust-item {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+        }
+
+        .new-trust-check {
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: rgba(74,222,128,0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .new-trust-check-mark {
+          font-size: 8px;
+          color: #4ade80;
+          font-weight: 700;
+          line-height: 1;
+        }
+
+        .new-trust-item-label {
+          font-size: 12px;
+          color: rgba(255,255,255,0.5);
+          font-weight: 500;
+        }
+
+        /* Responsive overrides */
+        @media (max-width: 768px) {
+          .new-hero-card { display: none; }
+          .new-hero-content {
+            max-width: 100%;
+            padding: 2rem 1.5rem;
+          }
+          .new-hero-h1 { font-size: 28px; }
+          .new-hero-urdu { font-size: 20px; }
+          .new-hero-stats {
+            flex-wrap: wrap;
+            gap: 1rem;
+          }
+          .new-stat-divider { display: none; }
+          .new-trust-bar { padding: 14px 1.25rem; gap: 1rem; }
+          .new-trust-items { gap: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+          .new-hero-cta-row {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .new-btn-primary,
+          .new-btn-outline {
+            width: 100%;
+            text-align: center;
+          }
+        }
+      `}</style>
+
+      {/* ═══════════════════════════
+           3. NEW HERO SECTION
+      ════════════════════════════ */}
+      <section className="new-hero" aria-label="Hero — Rebuilding Lives">
+        <div className="new-hero-stripe" aria-hidden="true"></div>
+        <div className="new-hero-pattern" aria-hidden="true"></div>
+        <div className="new-hero-orb-1" aria-hidden="true"></div>
+        <div className="new-hero-orb-2" aria-hidden="true"></div>
+
+        {/* 3a. LEFT CONTENT */}
+        <div className="new-hero-content">
+          <div className="new-hero-pill" role="note">
+            <span className="new-hero-pill-dot" aria-hidden="true"></span>
+            <span className="new-hero-pill-text">Pakistan's Trusted Humanitarian Foundation</span>
           </div>
 
-          {/* Right: Live Impact Calculator */}
-          <ScrollReveal className="hero-calculator-wrap" delay={1}>
-            <ImpactCalculator />
-          </ScrollReveal>
+          <span className="new-hero-urdu" lang="ur">
+            انسانیت کی خدمت — ہمارا مشن
+          </span>
+
+          <h1 className="new-hero-h1">
+            Rebuilding Lives, Restoring <span className="highlight">Dignity.</span>
+          </h1>
+
+          <p className="new-hero-para">
+            From flood-stricken villages in Sindh to drought-hit communities in Balochistan — 
+            Friends of Pakistan delivers housing, clean water, and emergency relief directly to 
+            those who need it most. No bureaucracy. 100% impact.
+          </p>
+
+          <div className="new-hero-cta-row">
+            <button 
+              className="new-btn-primary" 
+              onClick={() => alert("Thank you for your generosity!\nRedirecting to the donation page...")}
+            >
+              Donate Today &rarr;
+            </button>
+            <Link href="/projects" className="new-btn-outline">
+              View Our Projects
+            </Link>
+          </div>
+
+          <div className="new-hero-stats" role="list" aria-label="Impact statistics">
+            <div className="new-stat-item" role="listitem">
+              <span className="new-stat-number">1,000<span className="new-stat-plus">+</span></span>
+              <span className="new-stat-label">Projects Done</span>
+            </div>
+            <div className="new-stat-divider" aria-hidden="true"></div>
+            <div className="new-stat-item" role="listitem">
+              <span className="new-stat-number">430<span className="new-stat-plus">+</span></span>
+              <span className="new-stat-label">Homes Built</span>
+            </div>
+            <div className="new-stat-divider" aria-hidden="true"></div>
+            <div className="new-stat-item" role="listitem">
+              <span className="new-stat-number">200<span className="new-stat-plus">+</span></span>
+              <span className="new-stat-label">Wells Installed</span>
+            </div>
+            <div className="new-stat-divider" aria-hidden="true"></div>
+            <div className="new-stat-item" role="listitem">
+              <span className="new-stat-number">33<span className="new-stat-plus">+</span></span>
+              <span className="new-stat-label">Districts Served</span>
+            </div>
+          </div>
         </div>
 
-        <div className="hero-scroll">
-          <span>Scroll</span>
-          <div className="hero-scroll-arrow"></div>
-        </div>
+        {/* 3b. RIGHT CARD (INTERACTIVE) */}
+        <HeroCauseCard />
       </section>
+
+      {/* ═══════════════════════════
+           4. SCROLLING TICKER
+      ════════════════════════════ */}
+      <TickerSection />
+
+      {/* ═══════════════════════════
+           5. TRUST BAR
+      ════════════════════════════ */}
+      <div className="new-trust-bar" role="complementary" aria-label="Trust indicators">
+        <span className="new-trust-label">Trusted By</span>
+        <div className="new-trust-items">
+          <div className="new-trust-item">
+            <div className="new-trust-check" aria-hidden="true">
+              <span className="new-trust-check-mark">&#10003;</span>
+            </div>
+            <span className="new-trust-item-label">Verified Donors Worldwide</span>
+          </div>
+
+          <div className="new-trust-item">
+            <div className="new-trust-check" aria-hidden="true">
+              <span className="new-trust-check-mark">&#10003;</span>
+            </div>
+            <span className="new-trust-item-label">100% Transparent Accounts</span>
+          </div>
+
+          <div className="new-trust-item">
+            <div className="new-trust-check" aria-hidden="true">
+              <span className="new-trust-check-mark">&#10003;</span>
+            </div>
+            <span className="new-trust-item-label">Direct Field Operations</span>
+          </div>
+
+          <div className="new-trust-item">
+            <div className="new-trust-check" aria-hidden="true">
+              <span className="new-trust-check-mark">&#10003;</span>
+            </div>
+            <span className="new-trust-item-label">Serving Since 2021</span>
+          </div>
+        </div>
+      </div>
+
+
 
       <StatsStrip />
 
