@@ -14,6 +14,17 @@ import { getProjects, fetchProjectsFromFirebase, getReviews, fetchReviewsFromFir
 
 function HeroCauseCard() {
   const [activeCause, setActiveCause] = useState("housing");
+  const [donationAmount, setDonationAmount] = useState("50");
+  const [customAmount, setCustomAmount] = useState("");
+
+  const handleDonate = () => {
+    const finalAmount = donationAmount === "custom" ? customAmount : donationAmount;
+    if (!finalAmount || isNaN(Number(finalAmount)) || Number(finalAmount) <= 0) {
+      alert("Please select or enter a valid donation amount.");
+      return;
+    }
+    alert(`Thank you for your generosity! Initiating donation of $${finalAmount} for ${activeCause === 'housing' ? 'Safe Housing' : activeCause === 'water' ? 'Clean Water' : 'Disaster Relief'}...`);
+  };
 
   return (
     <div className="new-hero-card" aria-label="Choose a cause">
@@ -83,15 +94,90 @@ function HeroCauseCard() {
           <span className="new-cause-arrow" aria-hidden="true">&#8250;</span>
         </div>
 
+        {/* Dynamic Donation Amounts Panel */}
+        <div style={{ marginTop: "14px", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "12px" }}>
+          <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px", fontWeight: "600" }}>Select Amount (USD)</p>
+          <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+            {["25", "50", "100", "custom"].map((amt) => (
+              <button
+                key={amt}
+                onClick={() => setDonationAmount(amt)}
+                style={{
+                  flex: 1,
+                  background: donationAmount === amt ? "#1a7a4a" : "rgba(255,255,255,0.06)",
+                  border: donationAmount === amt ? "1px solid #4ade80" : "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: "5px",
+                  padding: "6px 0",
+                  color: "#fff",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                {amt === "custom" ? "Custom" : `$${amt}`}
+              </button>
+            ))}
+          </div>
+
+          {donationAmount === "custom" && (
+            <input
+              type="number"
+              placeholder="Enter Amount"
+              value={customAmount}
+              onChange={(e) => setCustomAmount(e.target.value)}
+              style={{
+                width: "100%",
+                background: "rgba(0,0,0,0.2)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: "5px",
+                padding: "8px",
+                color: "#fff",
+                fontSize: "12px",
+                marginBottom: "8px",
+                outline: "none"
+              }}
+            />
+          )}
+        </div>
+
         <button 
           className="new-cause-donate-btn"
-          onClick={() => alert("Thank you for your generosity!\nRedirecting to the donation page...")}
+          onClick={handleDonate}
         >
           Start Donation &rarr;
         </button>
       </div>
     </div>
   );
+}
+
+function AnimatedCounter({ target, duration = 1500 }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(target.toString().replace(/,/g, ""), 10);
+    if (isNaN(end)) return;
+    
+    const stepTime = 25;
+    const steps = duration / stepTime;
+    const increment = Math.max(Math.ceil(end / steps), 1);
+
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= end) {
+        clearInterval(timer);
+        setCount(end);
+      } else {
+        setCount(start);
+      }
+    }, stepTime);
+
+    return () => clearInterval(timer);
+  }, [target, duration]);
+
+  return <span>{count.toLocaleString()}</span>;
 }
 
 function TickerSection() {
@@ -440,11 +526,8 @@ export default function Home() {
           flex-shrink: 0;
         }
 
-        .new-hero-card {
-          position: absolute;
-          right: 2rem;
-          top: 50%;
-          transform: translateY(-50%);
+         .new-hero-card {
+          position: relative;
           z-index: 3;
           width: 240px;
         }
@@ -679,69 +762,72 @@ export default function Home() {
            3. NEW HERO SECTION
       ════════════════════════════ */}
       <section className="new-hero" aria-label="Hero — Rebuilding Lives">
-        <div className="new-hero-stripe" aria-hidden="true"></div>
         <div className="new-hero-pattern" aria-hidden="true"></div>
         <div className="new-hero-orb-1" aria-hidden="true"></div>
         <div className="new-hero-orb-2" aria-hidden="true"></div>
 
-        {/* 3a. LEFT CONTENT */}
-        <div className="new-hero-content">
-          <div className="new-hero-pill" role="note">
-            <span className="new-hero-pill-dot" aria-hidden="true"></span>
-            <span className="new-hero-pill-text">Pakistan's Trusted Humanitarian Foundation</span>
+        <div className="container" style={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
+          {/* 3a. LEFT CONTENT */}
+          <div className="new-hero-content" style={{ padding: "3.5rem 0", maxWidth: "58%" }}>
+            <div className="new-hero-pill" role="note">
+              <span className="new-hero-pill-dot" aria-hidden="true"></span>
+              <span className="new-hero-pill-text">Pakistan's Trusted Humanitarian Foundation</span>
+            </div>
+
+            <span className="new-hero-urdu" lang="ur">
+              انسانیت کی خدمت — ہمارا مشن
+            </span>
+
+            <h1 className="new-hero-h1">
+              Rebuilding Lives, Restoring <span className="highlight">Dignity.</span>
+            </h1>
+
+            <p className="new-hero-para">
+              From flood-stricken villages in Sindh to drought-hit communities in Balochistan — 
+              Friends of Pakistan delivers housing, clean water, and emergency relief directly to 
+              those who need it most. No bureaucracy. 100% impact.
+            </p>
+
+            <div className="new-hero-cta-row">
+              <button 
+                className="new-btn-primary" 
+                onClick={() => alert("Thank you for your generosity!\nRedirecting to the donation page...")}
+              >
+                Donate Today &rarr;
+              </button>
+              <Link href="/projects" className="new-btn-outline">
+                View Our Projects
+              </Link>
+            </div>
+
+            <div className="new-hero-stats" role="list" aria-label="Impact statistics">
+              <div className="new-stat-item" role="listitem">
+                <span className="new-stat-number"><AnimatedCounter target="1000" /><span className="new-stat-plus">+</span></span>
+                <span className="new-stat-label">Projects Completed</span>
+              </div>
+              <div className="new-stat-divider" aria-hidden="true"></div>
+              <div className="new-stat-item" role="listitem">
+                <span className="new-stat-number"><AnimatedCounter target="50000" /><span className="new-stat-plus">+</span></span>
+                <span className="new-stat-label">Lives Impacted</span>
+              </div>
+              <div className="new-stat-divider" aria-hidden="true"></div>
+              <div className="new-stat-item" role="listitem">
+                <span className="new-stat-number"><AnimatedCounter target="200" /><span className="new-stat-plus">+</span></span>
+                <span className="new-stat-label">Clean Water Wells</span>
+              </div>
+              <div className="new-stat-divider" aria-hidden="true"></div>
+              <div className="new-stat-item" role="listitem">
+                <span className="new-stat-number"><AnimatedCounter target="15" /><span className="new-stat-plus">+</span></span>
+                <span className="new-stat-label">Districts Served</span>
+              </div>
+            </div>
           </div>
 
-          <span className="new-hero-urdu" lang="ur">
-            انسانیت کی خدمت — ہمارا مشن
-          </span>
-
-          <h1 className="new-hero-h1">
-            Rebuilding Lives, Restoring <span className="highlight">Dignity.</span>
-          </h1>
-
-          <p className="new-hero-para">
-            From flood-stricken villages in Sindh to drought-hit communities in Balochistan — 
-            Friends of Pakistan delivers housing, clean water, and emergency relief directly to 
-            those who need it most. No bureaucracy. 100% impact.
-          </p>
-
-          <div className="new-hero-cta-row">
-            <button 
-              className="new-btn-primary" 
-              onClick={() => alert("Thank you for your generosity!\nRedirecting to the donation page...")}
-            >
-              Donate Today &rarr;
-            </button>
-            <Link href="/projects" className="new-btn-outline">
-              View Our Projects
-            </Link>
-          </div>
-
-          <div className="new-hero-stats" role="list" aria-label="Impact statistics">
-            <div className="new-stat-item" role="listitem">
-              <span className="new-stat-number">1,000<span className="new-stat-plus">+</span></span>
-              <span className="new-stat-label">Projects Done</span>
-            </div>
-            <div className="new-stat-divider" aria-hidden="true"></div>
-            <div className="new-stat-item" role="listitem">
-              <span className="new-stat-number">430<span className="new-stat-plus">+</span></span>
-              <span className="new-stat-label">Homes Built</span>
-            </div>
-            <div className="new-stat-divider" aria-hidden="true"></div>
-            <div className="new-stat-item" role="listitem">
-              <span className="new-stat-number">200<span className="new-stat-plus">+</span></span>
-              <span className="new-stat-label">Wells Installed</span>
-            </div>
-            <div className="new-stat-divider" aria-hidden="true"></div>
-            <div className="new-stat-item" role="listitem">
-              <span className="new-stat-number">33<span className="new-stat-plus">+</span></span>
-              <span className="new-stat-label">Districts Served</span>
-            </div>
+          {/* 3b. RIGHT CARD (INTERACTIVE) */}
+          <div style={{ position: "relative", zIndex: 3, paddingLeft: "20px" }}>
+            <HeroCauseCard />
           </div>
         </div>
-
-        {/* 3b. RIGHT CARD (INTERACTIVE) */}
-        <HeroCauseCard />
       </section>
 
       {/* ═══════════════════════════
@@ -784,10 +870,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-
-
-      <StatsStrip />
 
       <section className="section" style={{ background: "transparent", paddingTop: "80px", paddingBottom: "80px" }}>
         <div className="container">
