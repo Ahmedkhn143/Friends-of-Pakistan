@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { initializeFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Project } from "@/data/projects";
+import { Project, projects as defaultProjects } from "@/data/projects";
 
 export interface VideoItem {
   id: number;
@@ -85,19 +85,23 @@ export async function fetchProjectsFromFirebase(): Promise<Project[]> {
         order: Number(data.order ?? docSnap.id)
       } as Project);
     });
-    cachedProjects = list;
-    return list;
+    if (list.length === 0) {
+      cachedProjects = defaultProjects;
+    } else {
+      cachedProjects = list;
+    }
+    return cachedProjects;
   } catch (e) {
     console.error("Firebase fetch error:", e);
-    return cachedProjects;
+    return cachedProjects.length > 0 ? cachedProjects : defaultProjects;
   }
 }
 
 export function getProjects(): Project[] {
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && cachedProjects.length === 0) {
     fetchProjectsFromFirebase();
   }
-  return cachedProjects;
+  return cachedProjects.length > 0 ? cachedProjects : defaultProjects;
 }
 
 export async function saveProject(project: Omit<Project, "id"> & { id?: number; featured?: boolean; order?: number }) {

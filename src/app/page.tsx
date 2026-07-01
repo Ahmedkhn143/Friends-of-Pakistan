@@ -152,7 +152,7 @@ function HeroCauseCard() {
   );
 }
 
-function AnimatedCounter({ target, duration = 1500 }) {
+function AnimatedCounter({ target, duration = 1500 }: { target: number | string; duration?: number }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {

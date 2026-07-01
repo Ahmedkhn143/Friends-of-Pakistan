@@ -11,6 +11,28 @@ export const metadata: Metadata = {
     shortcut: "/logo_dark.png",
     apple: "/logo_dark.png",
   },
+  openGraph: {
+    title: "Friends of Pakistan — Serving Humanity Since 2021",
+    description: "Friends of Pakistan is a humanitarian foundation serving Pakistan through housing, clean water, and disaster relief since 2021. 1000+ projects completed.",
+    url: "https://friendsofpakistan.org",
+    siteName: "Friends of Pakistan",
+    images: [
+      {
+        url: "/logo.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Friends of Pakistan Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Friends of Pakistan — Serving Humanity Since 2021",
+    description: "Friends of Pakistan is a humanitarian foundation serving Pakistan through housing, clean water, and disaster relief since 2021. 1000+ projects completed.",
+    images: ["/logo.jpg"],
+  },
 };
 
 export default function RootLayout({

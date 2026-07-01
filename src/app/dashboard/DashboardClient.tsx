@@ -164,7 +164,7 @@ export default function DashboardClient() {
   };
 
   // ==================== SUBMIT HANDLERS ====================
-  const handleProjectSubmit = (e: React.FormEvent) => {
+  const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projTitle || !projLocation || !projDate || !projDesc || !projImg) {
       alert("Please fill in all required fields.");
@@ -184,13 +184,13 @@ export default function DashboardClient() {
       order: Number(projOrder),
     };
 
-    saveProject(payload);
+    await saveProject(payload);
     showToast(isEditing ? "Project updated successfully!" : "Project added successfully!");
     resetAllForms();
-    setTimeout(() => loadAllData(), 800);
+    loadAllData();
   };
 
-  const handleVideoSubmit = (e: React.FormEvent) => {
+  const handleVideoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!vidTitle || !vidUrl) {
       alert("Please fill in the Video Title and YouTube Link.");
@@ -229,13 +229,13 @@ export default function DashboardClient() {
       videoUrl: finalUrl
     };
 
-    saveVideo(payload);
+    await saveVideo(payload);
     showToast(isEditing ? "Video story updated!" : "Video story added!");
     resetAllForms();
-    setTimeout(() => loadAllData(), 800);
+    loadAllData();
   };
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
+  const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!revName || !revQuote || !revLoc) {
       alert("Please fill in Name, Review Description, and Location details.");
@@ -251,10 +251,10 @@ export default function DashboardClient() {
       loc: revLoc
     };
 
-    saveReview(payload);
+    await saveReview(payload);
     showToast(isEditing ? "Review updated!" : "Review added!");
     resetAllForms();
-    setTimeout(() => loadAllData(), 800);
+    loadAllData();
   };
 
   // ==================== EDIT & DELETE HANDLERS ====================
@@ -294,29 +294,29 @@ export default function DashboardClient() {
     scrollToForm();
   };
 
-  const handleProjectDelete = (projectId: number) => {
+  const handleProjectDelete = async (projectId: number) => {
     if (confirm("Are you sure you want to delete this project?")) {
-      deleteProject(projectId);
+      await deleteProject(projectId);
       showToast("Project deleted successfully!");
-      setTimeout(() => loadAllData(), 800);
+      loadAllData();
       resetAllForms();
     }
   };
 
-  const handleVideoDelete = (videoId: number) => {
+  const handleVideoDelete = async (videoId: number) => {
     if (confirm("Are you sure you want to delete this video?")) {
-      deleteVideo(videoId);
+      await deleteVideo(videoId);
       showToast("Video story deleted successfully!");
-      setTimeout(() => loadAllData(), 800);
+      loadAllData();
       resetAllForms();
     }
   };
 
-  const handleReviewDelete = (reviewId: number) => {
+  const handleReviewDelete = async (reviewId: number) => {
     if (confirm("Are you sure you want to delete this review?")) {
-      deleteReview(reviewId);
+      await deleteReview(reviewId);
       showToast("Review deleted successfully!");
-      setTimeout(() => loadAllData(), 800);
+      loadAllData();
       resetAllForms();
     }
   };
