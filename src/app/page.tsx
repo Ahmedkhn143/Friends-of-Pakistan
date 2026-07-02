@@ -29,7 +29,7 @@ function HeroCauseCard() {
   return (
     <div className="new-hero-card" aria-label="Choose a cause">
       <div className="new-cause-card">
-        <p className="new-cause-card-title">Choose a cause</p>
+        <p className="new-cause-card-title">Choose a Cause</p>
 
         <div 
           className={`new-cause-item ${activeCause === "housing" ? "active" : ""}`}
@@ -95,21 +95,21 @@ function HeroCauseCard() {
         </div>
 
         {/* Dynamic Donation Amounts Panel */}
-        <div style={{ marginTop: "14px", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "12px" }}>
-          <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px", fontWeight: "600" }}>Select Amount (USD)</p>
-          <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+        <div style={{ marginTop: "16px", borderTop: "1px solid #f3f4f6", paddingTop: "16px" }}>
+          <p style={{ fontSize: "11px", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px", fontWeight: "600" }}>Make an Impact Today</p>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
             {["25", "50", "100", "custom"].map((amt) => (
               <button
                 key={amt}
                 onClick={() => setDonationAmount(amt)}
                 style={{
                   flex: 1,
-                  background: donationAmount === amt ? "#1a7a4a" : "rgba(255,255,255,0.06)",
-                  border: donationAmount === amt ? "1px solid #4ade80" : "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: "5px",
-                  padding: "6px 0",
-                  color: "#fff",
-                  fontSize: "11px",
+                  background: donationAmount === amt ? "#1a7a4a" : "#f3f4f6",
+                  border: donationAmount === amt ? "1px solid #1a7a4a" : "1px solid #e5e7eb",
+                  borderRadius: "6px",
+                  padding: "8px 0",
+                  color: donationAmount === amt ? "#fff" : "#374151",
+                  fontSize: "12px",
                   fontWeight: "600",
                   cursor: "pointer",
                   transition: "all 0.2s"
@@ -128,13 +128,13 @@ function HeroCauseCard() {
               onChange={(e) => setCustomAmount(e.target.value)}
               style={{
                 width: "100%",
-                background: "rgba(0,0,0,0.2)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                borderRadius: "5px",
-                padding: "8px",
-                color: "#fff",
-                fontSize: "12px",
-                marginBottom: "8px",
+                background: "#fff",
+                border: "1px solid #d1d5db",
+                borderRadius: "6px",
+                padding: "8px 12px",
+                color: "#374151",
+                fontSize: "13px",
+                marginBottom: "10px",
                 outline: "none"
               }}
             />
@@ -308,13 +308,13 @@ export default function Home() {
 
         .new-hero {
           min-height: 520px;
-          background: linear-gradient(to right, rgba(10, 31, 20, 0.94) 30%, rgba(10, 31, 20, 0.8) 70%, rgba(10, 31, 20, 0.94) 100%), 
-                      url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+          background: linear-gradient(to right, #ffffff 45%, rgba(255, 255, 255, 0.95) 55%, rgba(255, 255, 255, 0.15) 75%, transparent 100%), 
+                      url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1600&auto=format&fit=crop') center right/cover no-repeat;
           position: relative;
           overflow: hidden;
           display: flex;
           align-items: center;
-          padding: 40px 0;
+          padding: 60px 0 40px 0;
         }
 
         .new-hero-stripe {
@@ -332,12 +332,12 @@ export default function Home() {
           inset: 0;
           background-image: repeating-linear-gradient(
             45deg,
-            #fff 0,
-            #fff 1px,
+            #1a7a4a 0,
+            #1a7a4a 1px,
             transparent 1px,
             transparent 60px
           );
-          opacity: 0.07;
+          opacity: 0.03;
           z-index: 0;
           pointer-events: none;
         }
@@ -349,7 +349,7 @@ export default function Home() {
           width: 400px;
           height: 400px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(26,122,74,0.35) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(26,122,74,0.15) 0%, transparent 70%);
           pointer-events: none;
           z-index: 0;
         }
@@ -361,7 +361,7 @@ export default function Home() {
           width: 300px;
           height: 300px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(26,122,74,0.2) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(26,122,74,0.1) 0%, transparent 70%);
           pointer-events: none;
           z-index: 0;
         }
@@ -369,26 +369,26 @@ export default function Home() {
         .new-hero-content {
           position: relative;
           z-index: 2;
-          padding: 3.5rem 2.5rem;
-          max-width: 58%;
+          padding: 1rem 0;
+          max-width: 54%;
         }
 
         .new-hero-pill {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: rgba(26,122,74,0.25);
-          border: 0.5px solid rgba(26,122,74,0.6);
+          background: rgba(26,122,74,0.06);
+          border: 1px solid rgba(26,122,74,0.25);
           border-radius: 20px;
-          padding: 5px 14px;
-          margin-bottom: 1.25rem;
+          padding: 5px 12px;
+          margin-bottom: 1rem;
         }
 
         .new-hero-pill-dot {
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: #4ade80;
+          background: #1a7a4a;
           position: relative;
           flex-shrink: 0;
         }
@@ -398,14 +398,14 @@ export default function Home() {
           position: absolute;
           inset: 0;
           border-radius: 50%;
-          background: #4ade80;
+          background: #1a7a4a;
           animation: pulse-ring 2s ease-out infinite;
         }
 
         .new-hero-pill-text {
-          font-size: 12px;
-          font-weight: 600;
-          color: #7de0a8;
+          font-size: 11px;
+          font-weight: 700;
+          color: #1a7a4a;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -414,7 +414,7 @@ export default function Home() {
           display: block;
           direction: rtl;
           font-size: 28px;
-          color: rgba(255,255,255,0.7);
+          color: rgba(15,47,31,0.7);
           font-weight: 500;
           margin-bottom: 4px;
           line-height: 1.3;
@@ -424,30 +424,30 @@ export default function Home() {
         .new-hero-h1 {
           font-size: 38px;
           font-weight: 800;
-          color: #fff;
-          line-height: 1.15;
+          color: #0f2f1f;
+          line-height: 1.2;
           letter-spacing: -0.5px;
-          margin-bottom: 1.25rem;
+          margin-bottom: 1rem;
           font-family: var(--font-playfair), serif;
         }
 
         .new-hero-h1 .highlight {
-          color: #4ade80;
+          color: #1a7a4a;
         }
 
         .new-hero-para {
-          font-size: 15px;
-          color: rgba(255,255,255,0.7);
-          line-height: 1.7;
+          font-size: 14px;
+          color: #4b5563;
+          line-height: 1.6;
           max-width: 500px;
-          margin-bottom: 2rem;
+          margin-bottom: 1.5rem;
         }
 
         .new-hero-cta-row {
           display: flex;
           align-items: center;
           gap: 12px;
-          margin-bottom: 2.5rem;
+          margin-bottom: 1.5rem;
           flex-wrap: wrap;
         }
 
@@ -464,117 +464,56 @@ export default function Home() {
         }
 
         .new-btn-primary:hover {
-          background: #22a060;
+          background: #125734;
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(26,122,74,0.4);
+          box-shadow: 0 6px 20px rgba(26,122,74,0.3);
         }
 
         .new-btn-outline {
-          background: transparent;
-          color: #fff;
-          border: 1px solid rgba(255,255,255,0.3);
+          background: #ffffff;
+          color: #0f2f1f;
+          border: 1px solid rgba(15,47,31,0.2);
           border-radius: 7px;
           padding: 12px 24px;
           font-size: 14px;
-          font-weight: 500;
+          font-weight: 600;
           cursor: pointer;
-          transition: border-color 0.2s, background 0.2s, transform 0.15s;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          text-decoration: none;
+          transition: all 0.2s;
         }
 
         .new-btn-outline:hover {
-          border-color: rgba(255,255,255,0.6);
-          background: rgba(255,255,255,0.05);
+          border-color: rgba(26,122,74,0.5);
+          background: rgba(26,122,74,0.04);
+          color: #1a7a4a;
           transform: translateY(-2px);
         }
 
         .new-hero-stats {
           display: flex;
           align-items: center;
-          gap: 2rem;
+          gap: 16px;
+          background: #ffffff;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+          border-radius: 12px;
+          padding: 12px 18px;
+          width: fit-content;
         }
 
         .new-stat-item {
           display: flex;
-          flex-direction: column;
-          gap: 3px;
-        }
-
-        .new-stat-number {
-          font-size: 22px;
-          font-weight: 800;
-          color: #fff;
-          line-height: 1;
-        }
-
-        .new-stat-number .new-stat-plus {
-          color: #4ade80;
-        }
-
-        .new-stat-label {
-          font-size: 11px;
-          color: rgba(255,255,255,0.5);
-          text-transform: uppercase;
-          letter-spacing: 0.6px;
-          font-weight: 500;
-        }
-
-        .new-stat-divider {
-          width: 0.5px;
-          height: 40px;
-          background: rgba(255,255,255,0.15);
-          align-self: center;
-          flex-shrink: 0;
-        }
-
-         .new-hero-card {
-          position: relative;
-          z-index: 3;
-          width: 240px;
-        }
-
-        .new-cause-card {
-          background: rgba(255,255,255,0.07);
-          border: 0.5px solid rgba(255,255,255,0.15);
-          border-radius: 12px;
-          padding: 1.25rem;
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-        }
-
-        .new-cause-card-title {
-          font-size: 11px;
-          color: rgba(255,255,255,0.5);
-          text-transform: uppercase;
-          letter-spacing: 0.8px;
-          font-weight: 600;
-          margin-bottom: 12px;
-        }
-
-        .new-cause-item {
-          display: flex;
           align-items: center;
           gap: 10px;
-          padding: 9px 10px;
-          border-radius: 8px;
-          margin-bottom: 6px;
-          cursor: pointer;
-          transition: background 0.2s, border-color 0.2s;
-          border: 0.5px solid transparent;
         }
 
-        .new-cause-item.active {
-          background: rgba(26,122,74,0.35);
-          border-color: rgba(26,122,74,0.5);
-        }
-
-        .new-cause-item:not(.active):hover {
-          background: rgba(255,255,255,0.06);
-        }
-
-        .new-cause-icon {
+        .new-stat-icon {
           width: 32px;
           height: 32px;
-          border-radius: 7px;
+          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -582,9 +521,101 @@ export default function Home() {
           flex-shrink: 0;
         }
 
-        .new-cause-icon.housing { background: rgba(26,122,74,0.4);  }
-        .new-cause-icon.water   { background: rgba(37,99,235,0.3);  }
-        .new-cause-icon.relief  { background: rgba(234,88,12,0.3);  }
+        .new-stat-icon.green {
+          background: rgba(26, 122, 74, 0.07);
+        }
+
+        .new-stat-icon.blue {
+          background: rgba(37, 99, 235, 0.07);
+        }
+
+        .new-stat-info {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .new-stat-number {
+          font-size: 15px;
+          font-weight: 800;
+          color: #0f2f1f;
+          line-height: 1.2;
+        }
+
+        .new-stat-number .new-stat-plus {
+          color: #1a7a4a;
+        }
+
+        .new-stat-label {
+          font-size: 9.5px;
+          color: #6b7280;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+
+        .new-stat-divider {
+          width: 1px;
+          height: 28px;
+          background: rgba(0,0,0,0.06);
+          flex-shrink: 0;
+        }
+
+        .new-hero-card {
+          position: relative;
+          z-index: 3;
+          width: 290px;
+        }
+
+        .new-cause-card {
+          background: #ffffff;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          border-radius: 16px;
+          padding: 20px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .new-cause-card-title {
+          font-size: 14px;
+          color: #0f2f1f;
+          font-weight: 700;
+          margin-bottom: 14px;
+        }
+
+        .new-cause-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 12px;
+          border-radius: 10px;
+          margin-bottom: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          border: 1px solid #f3f4f6;
+          background: #f9fafb;
+        }
+
+        .new-cause-item.active {
+          background: rgba(26, 122, 74, 0.05);
+          border-color: rgba(26, 122, 74, 0.25);
+        }
+
+        .new-cause-item:not(.active):hover {
+          background: #f3f4f6;
+        }
+
+        .new-cause-icon {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 15px;
+          flex-shrink: 0;
+        }
+
+        .new-cause-icon.housing { background: rgba(26,122,74,0.08); }
+        .new-cause-icon.water   { background: rgba(37,99,235,0.08); }
+        .new-cause-icon.relief  { background: rgba(234,88,12,0.08); }
 
         .new-cause-info {
           flex: 1;
@@ -592,34 +623,34 @@ export default function Home() {
         }
 
         .new-cause-name {
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 700;
-          color: #fff;
+          color: #0f2f1f;
           line-height: 1.2;
           margin-bottom: 2px;
         }
 
         .new-cause-sub {
-          font-size: 10px;
-          color: rgba(255,255,255,0.45);
+          font-size: 11px;
+          color: #6b7280;
           line-height: 1;
         }
 
         .new-cause-arrow {
-          color: rgba(255,255,255,0.4);
+          color: #9ca3af;
           font-size: 16px;
-          font-weight: 300;
+          font-weight: 400;
           flex-shrink: 0;
         }
 
         .new-cause-donate-btn {
-          margin-top: 12px;
+          margin-top: 14px;
           width: 100%;
           background: #1a7a4a;
           color: #fff;
           border: none;
-          border-radius: 7px;
-          padding: 10px;
+          border-radius: 8px;
+          padding: 12px;
           font-size: 13px;
           font-weight: 600;
           cursor: pointer;
@@ -627,8 +658,49 @@ export default function Home() {
         }
 
         .new-cause-donate-btn:hover {
-          background: #22a060;
-          transform: translateY(-1px);
+          background: #125734;
+        }
+
+        /* Testimonial Quote Bubble Overlay */
+        .new-hero-quote {
+          background: rgba(6, 78, 59, 0.96);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 12px;
+          padding: 14px 18px;
+          color: #ffffff;
+          max-width: 250px;
+          position: absolute;
+          bottom: 12px;
+          left: 48%;
+          z-index: 10;
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .new-hero-quote::before {
+          content: '“';
+          font-size: 28px;
+          color: rgba(74, 222, 128, 0.4);
+          position: absolute;
+          top: 4px;
+          left: 10px;
+          line-height: 1;
+        }
+
+        .new-hero-quote-text {
+          font-size: 12px;
+          line-height: 1.5;
+          margin-bottom: 6px;
+          padding-left: 12px;
+          color: rgba(255, 255, 255, 0.9);
+          font-style: italic;
+        }
+
+        .new-hero-quote-author {
+          font-size: 10px;
+          color: #4ade80;
+          font-weight: 600;
+          text-align: right;
+          display: block;
         }
 
         /* Ticker */
@@ -683,7 +755,7 @@ export default function Home() {
 
         .new-trust-label {
           font-size: 11px;
-          color: rgba(255,255,255,0.35);
+          color: rgba(255,255,255,0.6);
           text-transform: uppercase;
           letter-spacing: 0.8px;
           font-weight: 600;
@@ -707,7 +779,7 @@ export default function Home() {
           width: 14px;
           height: 14px;
           border-radius: 50%;
-          background: rgba(74,222,128,0.2);
+          background: rgba(74,222,128,0.25);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -723,18 +795,28 @@ export default function Home() {
 
         .new-trust-item-label {
           font-size: 12px;
-          color: rgba(255,255,255,0.5);
+          color: rgba(255,255,255,0.9);
           font-weight: 500;
         }
 
         /* Responsive overrides */
+        @media (max-width: 991px) {
+          .new-hero-quote {
+            display: none;
+          }
+        }
+
         @media (max-width: 768px) {
           .new-hero-card { display: none; }
+          .new-hero {
+            background: #ffffff;
+            padding: 40px 0;
+          }
           .new-hero-content {
             max-width: 100%;
             padding: 2rem 1.5rem;
           }
-          .new-hero-h1 { font-size: 28px; }
+          .new-hero-h1 { font-size: 32px; }
           .new-hero-urdu { font-size: 20px; }
           .new-hero-stats {
             flex-wrap: wrap;
@@ -766,26 +848,30 @@ export default function Home() {
         <div className="new-hero-orb-1" aria-hidden="true"></div>
         <div className="new-hero-orb-2" aria-hidden="true"></div>
 
+        {/* Testimonial Quote Bubble Overlay */}
+        <div className="new-hero-quote" aria-hidden="true">
+          <p className="new-hero-quote-text">
+            When we uplift one life, we uplift an entire community.
+          </p>
+          <span className="new-hero-quote-author">— Friends of Pakistan</span>
+        </div>
+
         <div className="container" style={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
           {/* 3a. LEFT CONTENT */}
-          <div className="new-hero-content" style={{ padding: "3.5rem 0", maxWidth: "58%" }}>
+          <div className="new-hero-content">
             <div className="new-hero-pill" role="note">
               <span className="new-hero-pill-dot" aria-hidden="true"></span>
               <span className="new-hero-pill-text">Pakistan's Trusted Humanitarian Foundation</span>
             </div>
 
-            <span className="new-hero-urdu" lang="ur">
-              انسانیت کی خدمت — ہمارا مشن
-            </span>
-
             <h1 className="new-hero-h1">
-              Rebuilding Lives, Restoring <span className="highlight">Dignity.</span>
+              Rebuilding Lives.<br />Restoring <span className="highlight">Dignity.</span>
             </h1>
 
             <p className="new-hero-para">
               From flood-stricken villages in Sindh to drought-hit communities in Balochistan — 
               Friends of Pakistan delivers housing, clean water, and emergency relief directly to 
-              those who need it most. No bureaucracy. 100% impact.
+              those who need it most.
             </p>
 
             <div className="new-hero-cta-row">
@@ -795,30 +881,57 @@ export default function Home() {
               >
                 Donate Today &rarr;
               </button>
-              <Link href="/projects" className="new-btn-outline">
-                View Our Projects
-              </Link>
+              <a 
+                href="#impact-section" 
+                className="new-btn-outline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = document.getElementById("videos");
+                  if (target) {
+                    target.scrollIntoView({ behavior: "smooth" });
+                  } else {
+                    alert("Redirecting to the impact section...");
+                  }
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style={{ marginRight: "4px" }}>
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                See Our Impact
+              </a>
             </div>
 
             <div className="new-hero-stats" role="list" aria-label="Impact statistics">
               <div className="new-stat-item" role="listitem">
-                <span className="new-stat-number"><AnimatedCounter target="1000" /><span className="new-stat-plus">+</span></span>
-                <span className="new-stat-label">Projects Completed</span>
+                <div className="new-stat-icon green">🏠</div>
+                <div className="new-stat-info">
+                  <span className="new-stat-number"><AnimatedCounter target="1000" /><span className="new-stat-plus">+</span></span>
+                  <span className="new-stat-label">Projects Completed</span>
+                </div>
               </div>
               <div className="new-stat-divider" aria-hidden="true"></div>
               <div className="new-stat-item" role="listitem">
-                <span className="new-stat-number"><AnimatedCounter target="50000" /><span className="new-stat-plus">+</span></span>
-                <span className="new-stat-label">Lives Impacted</span>
+                <div className="new-stat-icon green">👥</div>
+                <div className="new-stat-info">
+                  <span className="new-stat-number"><AnimatedCounter target="50000" /><span className="new-stat-plus">+</span></span>
+                  <span className="new-stat-label">Lives Impacted</span>
+                </div>
               </div>
               <div className="new-stat-divider" aria-hidden="true"></div>
               <div className="new-stat-item" role="listitem">
-                <span className="new-stat-number"><AnimatedCounter target="200" /><span className="new-stat-plus">+</span></span>
-                <span className="new-stat-label">Clean Water Wells</span>
+                <div className="new-stat-icon blue">💧</div>
+                <div className="new-stat-info">
+                  <span className="new-stat-number"><AnimatedCounter target="200" /><span className="new-stat-plus">+</span></span>
+                  <span className="new-stat-label">Clean Water Wells</span>
+                </div>
               </div>
               <div className="new-stat-divider" aria-hidden="true"></div>
               <div className="new-stat-item" role="listitem">
-                <span className="new-stat-number"><AnimatedCounter target="15" /><span className="new-stat-plus">+</span></span>
-                <span className="new-stat-label">Districts Served</span>
+                <div className="new-stat-icon green">📍</div>
+                <div className="new-stat-info">
+                  <span className="new-stat-number"><AnimatedCounter target="15" /><span className="new-stat-plus">+</span></span>
+                  <span className="new-stat-label">Districts Served</span>
+                </div>
               </div>
             </div>
           </div>
